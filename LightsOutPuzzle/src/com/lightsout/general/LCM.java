@@ -1,4 +1,4 @@
-
+package com.lightsout.general;
 public class LCM {
 
 	public static int findLCM(int a, int b) {

@@ -1,3 +1,4 @@
+package com.lightsout.main;
 import java.io.*;
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ public class EnterMatrix {
 		BufferedReader br;
 
 		try {
-			br = new BufferedReader(new FileReader("bin/input"));
+			br = new BufferedReader(new FileReader("src/input.txt"));
 			while ((str = br.readLine()) != null) {
 				if (str.equals(""))
 					continue;

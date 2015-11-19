@@ -1,3 +1,4 @@
+package com.lightsout.general;
 
 public class GaussElim {
 	protected int[][] matrix;

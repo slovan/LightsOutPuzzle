@@ -1,3 +1,4 @@
+package com.lightsout.general;
 
 public class GCD {
 	public static int findGCD(int a, int b){

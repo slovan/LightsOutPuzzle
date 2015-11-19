@@ -1,3 +1,5 @@
+package com.lightsout.two_values;
+import com.lightsout.general.GaussElim;
 
 public class GaussElimBin extends GaussElim {
 
