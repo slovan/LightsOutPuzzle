@@ -1,46 +1,40 @@
 package com.lightsout.main;
-import com.lightsout.general.GaussElim;
+
+import com.lightsout.two_values.AugmentedMatrix;
+import com.lightsout.two_values.GaussElimBin;
+import com.lightsout.two_values.GaussJordanElim;
+import com.lightsout.two_values.LightsOutMatrix;
 
 public class Execution {
-	
+
 	public void printMatrix(int[][] matrix) {
 		for (int row[] : matrix) {
 			for (int elem : row)
-				System.out.printf("%3d ", elem);
+				System.out.printf("%1d ", elem);
 			System.out.println();
 		}
 	}
 
 	public static void main(String[] args) {
-		
+
 		Execution ex = new Execution();
-		
-		/*LightsOutMatrix lom = new LightsOutMatrix(3);
-		int[][] matrixA = lom.getLightsOutMatrix();
-		for(int buf[] : matrixA) {
-			for(int elem : buf)
-				System.out.print(elem + " ");
-			System.out.println();
-		}
+
+		LightsOutMatrix lom = new LightsOutMatrix(5);
+		ex.printMatrix(lom.getLightsOutMatrix());
 		System.out.println();
-		
-		GaussElimBin geb = new GaussElimBin(matrixA);
-		System.out.println("The rank of matrix is: " + geb.getRank() + ".");
-		geb.printMatrix();
-		System.out.println();*/
-		
-		EnterMatrix em = new EnterMatrix();
-		int[][] matr = em.getMatrix();
-		for(int buf[] : matr) {
-			for(int elem : buf)
-				System.out.print(elem + " ");
-			System.out.println();
-		}
-		
-		GaussElim geb = new GaussElim(matr);
+
+		GaussElimBin geb = new GaussElimBin(lom.getLightsOutMatrix());
 		System.out.println("The rank of matrix is: " + geb.getRank() + ".");
 		ex.printMatrix(geb.getMatrix());
 		System.out.println();
 		
+		AugmentedMatrix augm = new AugmentedMatrix();
+		System.out.println("The augmented matrix:");
+		ex.printMatrix(augm.getAugMatrix());
+		
+		GaussJordanElim gje = new GaussJordanElim(augm.getAugMatrix());
+		System.out.println("After Gauss-Jordan elimination:");
+		ex.printMatrix(gje.getMatrix());
+
 	}
 }

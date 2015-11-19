@@ -1,4 +1,4 @@
-package com.lightsout.general;
+package com.lightsout.gauss_general;
 
 public class GaussElim {
 	protected int[][] matrix;
@@ -23,10 +23,9 @@ public class GaussElim {
 		int valueGCD;
 		// cycle of Gauss's elimination
 		GaussElim: {
-			for (int p = 0, q = 0; p < matrix.length; p++, q++) {
+			for (int p = 0, q = 0; (p < matrix.length) && (q < matrix[p].length); p++, q++) {
 				// p is row number, q is column number
-				if (q > matrix[p].length - 1)
-					break;
+
 				// find row with non-zero element of q-th column and make it
 				// first in the matrix
 				boolean flag = true;

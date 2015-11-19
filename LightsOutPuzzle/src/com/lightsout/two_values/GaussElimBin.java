@@ -1,5 +1,5 @@
 package com.lightsout.two_values;
-import com.lightsout.general.GaussElim;
+import com.lightsout.gauss_general.GaussElim;
 
 public class GaussElimBin extends GaussElim {
 
@@ -11,7 +11,7 @@ public class GaussElimBin extends GaussElim {
 	public void makeGaussElim() {
 		// cycle of Gauss's elimination
 		GaussElim: {
-			for (int p = 0, q = 0; p < matrix.length; p++, q++) {
+			for (int p = 0, q = 0; (p < matrix.length) && (q < matrix[p].length); p++, q++) {
 				// p is row number, q is column number
 
 				// find row with non-zero element of q-th column and make it
@@ -29,7 +29,8 @@ public class GaussElimBin extends GaussElim {
 								break;
 							}
 						}
-					}
+					} else
+						flag = true;
 					if (!flag)
 						if (q == matrix[p].length - 1) // if the last column
 							break GaussElim; // every of rest elements are zero

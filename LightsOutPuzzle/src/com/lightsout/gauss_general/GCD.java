@@ -1,4 +1,4 @@
-package com.lightsout.general;
+package com.lightsout.gauss_general;
 
 public class GCD {
 	public static int findGCD(int a, int b){

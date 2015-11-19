@@ -1,4 +1,4 @@
-package com.lightsout.general;
+package com.lightsout.gauss_general;
 public class LCM {
 
 	public static int findLCM(int a, int b) {
