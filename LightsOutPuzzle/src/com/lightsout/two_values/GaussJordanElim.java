@@ -2,9 +2,12 @@ package com.lightsout.two_values;
 
 public class GaussJordanElim {
 	private int[][] matrix;
+	private int rank;
 
 	public GaussJordanElim(int[][] matrix) {
-		this.matrix = new GaussElimBin(matrix).getMatrix();
+		GaussElimBin geb = new GaussElimBin(matrix);
+		this.matrix = geb.getMatrix();
+		this.rank = geb.getRank();
 		makeJordanGaussElim();
 	}
 
@@ -40,6 +43,14 @@ public class GaussJordanElim {
 
 	public void setMatrix(int[][] matrix) {
 		this.matrix = matrix;
+	}
+
+	public int getRank() {
+		return rank;
+	}
+
+	public void setRank(int rank) {
+		this.rank = rank;
 	}
 
 }
