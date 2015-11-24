@@ -5,7 +5,7 @@ public class GaussJordanElim {
 	private int rank;
 
 	public GaussJordanElim(int[][] matrix) {
-		GaussElimBin geb = new GaussElimBin(matrix);
+		GaussTwoStates geb = new GaussTwoStates(matrix);
 		this.matrix = geb.getMatrix();
 		this.rank = geb.getRank();
 		makeJordanGaussElim();

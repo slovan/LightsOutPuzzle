@@ -1,11 +1,11 @@
 package com.lightsout.two_values;
 
-public class GaussElimBin {
+public class GaussTwoStates {
 	private int[][] matrix;
 	private int rank;
 	private int det; // contain a determinant of the matrix
 
-	public GaussElimBin(int[][] matrix) {
+	public GaussTwoStates(int[][] matrix) {
 		this.matrix = matrix;
 		this.rank = matrix.length;
 		this.det = 1;

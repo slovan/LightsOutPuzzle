@@ -1,7 +1,7 @@
 package com.lightsout.main;
 
 import com.lightsout.two_values.AugmentedMatrix;
-import com.lightsout.two_values.GaussElimBin;
+import com.lightsout.two_values.GaussTwoStates;
 import com.lightsout.two_values.GaussJordanElim;
 import com.lightsout.two_values.LightsOutMatrix;
 
@@ -23,7 +23,7 @@ public class Execution {
 		ex.printMatrix(lom.getLightsOutMatrix());
 		System.out.println();
 
-		GaussElimBin geb = new GaussElimBin(lom.getLightsOutMatrix());
+		GaussTwoStates geb = new GaussTwoStates(lom.getLightsOutMatrix());
 		System.out.println("The rank of matrix is: " + geb.getRank() + ".");
 		ex.printMatrix(geb.getMatrix());
 		System.out.println();
@@ -35,6 +35,13 @@ public class Execution {
 		GaussJordanElim gje = new GaussJordanElim(augm.getAugMatrix());
 		System.out.println("After Gauss-Jordan elimination:");
 		ex.printMatrix(gje.getMatrix());
+		
+		QuietPatterns qp = new QuietPatterns();
+		System.out.println("Quiet Patterns:");
+		ex.printMatrix(qp.getQuietPatterns());
+		
+		Solution sol = new Solution();
+		sol.findSolutions();
 
 	}
 }

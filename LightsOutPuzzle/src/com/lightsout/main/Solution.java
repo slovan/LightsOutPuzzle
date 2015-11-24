@@ -1,7 +1,7 @@
 package com.lightsout.main;
 
 import com.lightsout.two_values.AugmentedMatrix;
-import com.lightsout.two_values.GaussElimBin;
+import com.lightsout.two_values.GaussTwoStates;
 import com.lightsout.two_values.GaussJordanElim;
 import com.lightsout.two_values.LightsOutMatrix;
 
@@ -11,7 +11,7 @@ public class Solution {
 	private int size = 5;
 	
 	public Solution() {
-		GaussElimBin geb = new GaussElimBin(new LightsOutMatrix(size).getLightsOutMatrix());
+		GaussTwoStates geb = new GaussTwoStates(new LightsOutMatrix(size).getLightsOutMatrix());
 		GaussJordanElim gje = new GaussJordanElim(new AugmentedMatrix().getAugMatrix());
 		this.gaussJordanMatrix = gje.getMatrix();
 		if (geb.getRank() == gje.getRank())
