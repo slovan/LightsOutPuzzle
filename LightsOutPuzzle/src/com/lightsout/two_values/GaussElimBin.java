@@ -1,13 +1,20 @@
 package com.lightsout.two_values;
-import com.lightsout.gauss_general.GaussElim;
 
-public class GaussElimBin extends GaussElim {
+public class GaussElimBin {
+	private int[][] matrix;
+	private int rank;
+	private int det; // contain a determinant of the matrix
 
 	public GaussElimBin(int[][] matrix) {
-		super(matrix);
+		this.matrix = matrix;
+		this.rank = matrix.length;
+		this.det = 1;
+
+		makeGaussElim();
+		findRank();
+		findDet();
 	}
 
-	@Override
 	public void makeGaussElim() {
 		// cycle of Gauss's elimination
 		GaussElim: {
@@ -51,4 +58,49 @@ public class GaussElimBin extends GaussElim {
 			}
 		}
 	}
+
+	public void findRank() {
+		for (int i = matrix.length - 1; i >= 0; i--) {
+			boolean flag = false;
+			for (int j = 0; j < matrix[i].length; j++) {
+				if (matrix[i][j] != 0)
+					flag = true;
+			}
+			if (!flag)
+				rank--;
+		}
+	}
+
+	private void findDet() {
+		if (rank < matrix.length)
+			det = 0;
+		else {
+			det = 1;
+		}
+	}
+
+	public int[][] getMatrix() {
+		return matrix;
+	}
+
+	public void setMatrix(int[][] matrix) {
+		this.matrix = matrix;
+	}
+
+	public int getRank() {
+		return rank;
+	}
+
+	public void setRank(int rank) {
+		this.rank = rank;
+	}
+
+	public int getDet() {
+		return det;
+	}
+
+	public void setDet(int det) {
+		this.det = det;
+	}
+
 }
