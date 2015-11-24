@@ -1,12 +1,10 @@
 package com.lightsout.twoStates;
 
-import com.lightsout.main.EnterMatrix;
-
 public class AugmentedMatrix {
 	private int[][] augMatrix;
 	
 	public AugmentedMatrix(){
-		this(new LightsOutMatrix(5).getLightsOutMatrix(), new EnterMatrix().getMatrix());
+		this(new LightsOutMatrix(5).getLightsOutMatrix(), new InitialConfig().getMatrix());
 	}
 	
 	public AugmentedMatrix(int[][] coeffMatrix, int[][] configMatrix){
