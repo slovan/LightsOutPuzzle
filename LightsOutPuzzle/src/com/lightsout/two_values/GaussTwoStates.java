@@ -1,6 +1,8 @@
 package com.lightsout.two_values;
 
-public class GaussTwoStates {
+import com.lightsout.interfaces.GaussElimination;
+
+public class GaussTwoStates implements GaussElimination {
 	private int[][] matrix;
 	private int rank;
 	private int det; // contain a determinant of the matrix
@@ -71,7 +73,7 @@ public class GaussTwoStates {
 		}
 	}
 
-	private void findDet() {
+	public void findDet() {
 		if (rank < matrix.length)
 			det = 0;
 		else {
