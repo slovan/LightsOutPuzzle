@@ -1,9 +1,9 @@
 package com.lightsout.main;
 
-import com.lightsout.two_values.AugmentedMatrix;
-import com.lightsout.two_values.GaussTwoStates;
-import com.lightsout.two_values.GaussJordanElim;
-import com.lightsout.two_values.LightsOutMatrix;
+import com.lightsout.twoStates.AugmentedMatrix;
+import com.lightsout.twoStates.GaussJordanElim;
+import com.lightsout.twoStates.GaussTwoStates;
+import com.lightsout.twoStates.LightsOutMatrix;
 
 public class Solution {
 	private Boolean isSolution;

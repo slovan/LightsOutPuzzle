@@ -1,4 +1,4 @@
-package com.lightsout.two_values;
+package com.lightsout.twoStates;
 
 public class SquareMatrix {
 	int[][] squareMatrix;
