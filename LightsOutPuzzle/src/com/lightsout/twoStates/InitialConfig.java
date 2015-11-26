@@ -6,7 +6,7 @@ import java.io.*;
 // This class read initial configuration from the file
 public class InitialConfig {
 	private int[][] configMatrix; // is read from the file
-	private int size; // size n of n*n initial configuration matrix
+	private static int size; // size n of n*n initial configuration matrix
 
 	public InitialConfig() {
 
@@ -73,12 +73,12 @@ public class InitialConfig {
 		this.configMatrix = matrix;
 	}
 
-	public int getSize() {
+	public static int getSize() {
 		return size;
 	}
 
-	public void setSize(int size) {
-		this.size = size;
+	public static void setSize(int size) {
+		InitialConfig.size = size;
 	}
 
 }
