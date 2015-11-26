@@ -9,8 +9,10 @@ public class AugmentedMatrix {
 	public AugmentedMatrix(){
 		InitialConfig init = new InitialConfig();
 		LightsOutMatrix lom = new LightsOutMatrix();
+		int[][] coeffMatrix = lom.getLightsOutMatrix(); // variable of lights out matrix
+		this.augMatrix = new int[coeffMatrix.length][coeffMatrix.length + 1];
 		int[] vectorMatrix = makeVectorMatrix(init.getConfigMatrix());
-		makeAugmentedMatrix(lom.getLightsOutMatrix(), vectorMatrix);
+		makeAugmentedMatrix(coeffMatrix, vectorMatrix);
 	}
 	
 	public AugmentedMatrix(int[][] coeffMatrix, int[][] configMatrix){
