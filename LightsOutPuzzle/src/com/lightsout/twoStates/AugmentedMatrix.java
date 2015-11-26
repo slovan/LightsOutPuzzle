@@ -7,7 +7,10 @@ public class AugmentedMatrix {
 	private int[][] augMatrix;
 	
 	public AugmentedMatrix(){
-		this(new LightsOutMatrix(5).getLightsOutMatrix(), new InitialConfig().getMatrix());
+		InitialConfig init = new InitialConfig();
+		LightsOutMatrix lom = new LightsOutMatrix();
+		int[] vectorMatrix = makeVectorMatrix(init.getConfigMatrix());
+		makeAugmentedMatrix(lom.getLightsOutMatrix(), vectorMatrix);
 	}
 	
 	public AugmentedMatrix(int[][] coeffMatrix, int[][] configMatrix){

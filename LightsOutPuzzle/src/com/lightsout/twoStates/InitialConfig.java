@@ -65,12 +65,12 @@ public class InitialConfig {
 
 	}
 
-	public int[][] getMatrix() {
+	public int[][] getConfigMatrix() {
 		return configMatrix;
 	}
 
-	public void setMatrix(int[][] matrix) {
-		this.configMatrix = matrix;
+	public void setConfigMatrix(int[][] configMatrix) {
+		this.configMatrix = configMatrix;
 	}
 
 	public static int getSize() {
