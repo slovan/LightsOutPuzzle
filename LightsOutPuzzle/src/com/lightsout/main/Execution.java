@@ -4,6 +4,8 @@ import com.lightsout.twoStates.AugmentedMatrix;
 import com.lightsout.twoStates.GaussJordanElim;
 import com.lightsout.twoStates.GaussTwoStates;
 import com.lightsout.twoStates.LightsOutMatrix;
+import com.lightsout.twoStates.QuietPatterns;
+import com.lightsout.twoStates.Solution;
 
 public class Execution {
 

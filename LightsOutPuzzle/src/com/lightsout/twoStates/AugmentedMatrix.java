@@ -1,5 +1,8 @@
 package com.lightsout.twoStates;
 
+// Add configuration matrix  to lights out matrix
+// need to determine if any solution exists
+// if yes, prepare augMatrix to find all solutions using Gauss-Jordan elimination
 public class AugmentedMatrix {
 	private int[][] augMatrix;
 	
@@ -18,6 +21,8 @@ public class AugmentedMatrix {
 		makeAugmentedMatrix(coeffMatrix, vectorMatrix);
 	}
 	
+	// use this method if the configuration matrix is specified as square matrix
+	// makes vector matrix of n*n length
 	public int[] makeVectorMatrix(int[][] configMatrix){
 		int[] vectorMatrix = new int[(int)Math.pow(configMatrix.length, 2)];
 		for (int i = 0; i < configMatrix.length; i++)

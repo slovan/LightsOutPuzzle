@@ -1,7 +1,4 @@
-package com.lightsout.main;
-
-import com.lightsout.twoStates.GaussJordanElim;
-import com.lightsout.twoStates.LightsOutMatrix;
+package com.lightsout.twoStates;
 
 public class QuietPatterns {
 	private int[][] matrix;
