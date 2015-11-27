@@ -8,23 +8,24 @@ public class Solution {
 	private int[][] gaussJordanMatrix;
 	private int[][] solutions; // contain all solutions
 	private int[][] optimalSolution;
+	private int countMIN; // counter of steps in the optimal solution
 
 	public Solution() {
 
 		new InitialConfig(); // must be run at the beginning of program to set
 								// values to its static attributes
 
-		this.size = InitialConfig.getSize(); // set size of game
+		size = InitialConfig.getSize(); // set size of game
 
 		GaussTwoStates geb = new GaussTwoStates(new LightsOutMatrix().getLightsOutMatrix());
 
 		GaussJordanElim gje = new GaussJordanElim(new AugmentedMatrix().getAugMatrix());
-		this.gaussJordanMatrix = gje.getMatrix();
+		gaussJordanMatrix = gje.getMatrix();
 
 		if (geb.getRank() == gje.getRank())
-			this.isSolution = true;
+			isSolution = true;
 		else
-			this.isSolution = false;
+			isSolution = false;
 
 		findSolutions();
 		findOptimalSolution();
@@ -34,8 +35,8 @@ public class Solution {
 		if (isSolution) {
 			QuietPatterns qp = new QuietPatterns(); // generate quiet patterns
 													// for the size of game
-			this.solutions = qp.getQuietPatterns(); // set reference to quiet
-													// patterns matrix
+			solutions = qp.getQuietPatterns(); // set reference to quiet
+												// patterns matrix
 
 			// loop to find the solution matrix
 			for (int i = 0; i < solutions.length; i++) {
@@ -44,17 +45,17 @@ public class Solution {
 				}
 			}
 		} else {
-			this.solutions = null;
+			solutions = null;
 		}
 	}
 
 	public void findOptimalSolution() {
 		if (isSolution) {
 			// initialization of optimal solution matrix
-			this.optimalSolution = new int[size][size];
+			optimalSolution = new int[size][size];
 
-			int countMIN = size * size; // counter of steps in the optimal
-										// solution
+			countMIN = size * size; // counter of steps in the optimal
+									// solution
 			int index = 0; // index of row of the solutions matrix with the
 							// optimal solution
 			for (int i = 0; i < solutions.length; i++) {
@@ -77,7 +78,7 @@ public class Solution {
 			}
 
 		} else {
-			this.optimalSolution = null;
+			optimalSolution = null;
 		}
 	}
 
@@ -121,4 +122,11 @@ public class Solution {
 		this.optimalSolution = optimalSolution;
 	}
 
+	public int getCountMIN() {
+		return countMIN;
+	}
+
+	public void setCountMIN(int countMIN) {
+		this.countMIN = countMIN;
+	}
 }
