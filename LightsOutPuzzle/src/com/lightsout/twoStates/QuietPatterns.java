@@ -5,7 +5,7 @@ public class QuietPatterns {
 	private int[][] matrix; // matrix of lights out matrix, to be changed with
 							// Gauss-Jordan elimination
 	private int[][] quietPatterns;
-	private int size; // size of game
+	private int size; // size of the game
 	private int nullity; // the dimension of the null space of the lights out
 							// matrix
 
