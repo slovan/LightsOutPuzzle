@@ -25,12 +25,12 @@ public class QuietPatterns {
 	public void findQuietPatterns() {
 		// flag to mark position of dependent variables
 		boolean[] pFlags = new boolean[this.matrix.length];
-		for (int i = 0, j = 0; j < this.matrix[i].length; j++) {
+		for (int i = 0, j = 0; (i < this.matrix.length) && (j < this.matrix[i].length); j++) {
 			if (this.matrix[i][j] != 0) {
 				i++;
-				pFlags[j] = true;
+				pFlags[j] = true; // independent variables
 			} else {
-				pFlags[j] = false;
+				pFlags[j] = false; // dependent variables
 			}
 		}
 
