@@ -64,7 +64,7 @@ public class QuietPatterns {
 				if (pFlags[j]) {
 					int sum = 0;
 					for (int k = j + 1; k < quietPatterns[i].length; k++) {
-						sum += quietPatterns[i][k] * matrix[j][k];
+						sum = (sum + quietPatterns[i][k] * matrix[j][k]) % 2;
 					}
 					quietPatterns[i][j] = (2 - sum) % 2;
 				}
