@@ -26,9 +26,6 @@ public class Solution {
 			isSolution = true;
 		else
 			isSolution = false;
-
-		findSolutions();
-		findOptimalSolution();
 	}
 
 	public void findSolutions() {
@@ -51,6 +48,7 @@ public class Solution {
 
 	public void findOptimalSolution() {
 		if (isSolution) {
+			findSolutions();
 			// initialization of optimal solution matrix
 			optimalSolution = new int[size][size];
 

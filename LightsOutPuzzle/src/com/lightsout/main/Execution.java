@@ -45,7 +45,10 @@ public class Execution {
 				int size = sc.nextInt();
 				if (size > 0) {
 					flag = true;
-					new RandomInput(size);
+					//new RandomInput(size);
+					System.out.print("Please, wait. Looking for solvable initial configuration matrix... ");
+					new RandomInput(size, true);
+					System.out.print("Done.\n");
 				} else {
 					flag = false;
 					System.out.println("Please, try again. The size cannot be less than 1.");
@@ -57,6 +60,10 @@ public class Execution {
 		Solution sol = new Solution();
 		System.out.println("\nThe configuration matrix is:");
 		ex.printMatrix(InitialConfig.getConfigMatrix());
+		
+		System.out.print("Please, wait. Looking for optimal solution... ");
+		sol.findOptimalSolution();;
+		System.out.print("Done.\n");
 		
 		/* 
 		LightsOutMatrix lom = new LightsOutMatrix();
@@ -91,8 +98,8 @@ public class Execution {
 		if (sol.getSolutions() == null)
 			System.out.println("\nSuch configuration does not have any solutions!");
 		else {
-			System.out.println("\nAll solutions:");
-			ex.printMatrix(sol.getSolutions());
+			/*System.out.println("\nAll solutions:");
+			ex.printMatrix(sol.getSolutions());*/
 			
 			System.out.println("\nThe optimal solution (" + sol.getCountMIN() + " steps) is:");
 			ex.printMatrix(sol.getOptimalSolution());

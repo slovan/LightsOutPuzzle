@@ -24,6 +24,39 @@ public class RandomInput {
 
 		writeToFile(configMatrix);
 	}
+	
+	// using this constructor existing of solution is assured if isSolvable=true
+	public RandomInput(int size, boolean isSolvable){
+		this.size = size;
+
+		// initialize random generator
+		Random rand = new Random();
+
+		// set configuration matrix
+		configMatrix = new int[size][size];
+		if (!isSolvable){
+			for (int i = 0; i < size; i++)
+				for (int j = 0; j < size; j++)
+					configMatrix[i][j] = rand.nextInt(2);
+		} else {
+			GaussTwoStates geb = new GaussTwoStates(new LightsOutMatrix(size).getLightsOutMatrix());
+			GaussJordanElim gje;
+			boolean hasSolution;
+			
+			do {
+				for (int i = 0; i < size; i++)
+					for (int j = 0; j < size; j++)
+						configMatrix[i][j] = rand.nextInt(2);
+				gje = new GaussJordanElim(new AugmentedMatrix(new LightsOutMatrix(size).getLightsOutMatrix(), configMatrix).getAugMatrix());
+				if (geb.getRank() == gje.getRank())
+					hasSolution = true;
+				else
+					hasSolution = false;
+			} while (!hasSolution);
+		}
+		
+		writeToFile(configMatrix);
+	}
 
 	// write any config matrix to input.txt
 	public void writeToFile(int[][] configMatrix) {
