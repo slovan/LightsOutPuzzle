@@ -8,7 +8,6 @@ import java.util.Scanner;
 import com.lightsout.twoStates.InitialConfig;
 //import com.lightsout.twoStates.LightsOutMatrix;
 //import com.lightsout.twoStates.QuietPatterns;
-import com.lightsout.twoStates.RandomInput;
 import com.lightsout.twoStates.Solution;
 
 public class Execution {
@@ -47,7 +46,7 @@ public class Execution {
 					flag = true;
 					//new RandomInput(size);
 					System.out.print("Please, wait. Looking for solvable initial configuration matrix... ");
-					new RandomInput(size, true);
+					InitialConfig.writeToFile(InitialConfig.getRandomConfig(size));
 					System.out.print("Done.\n");
 				} else {
 					flag = false;
@@ -57,12 +56,11 @@ public class Execution {
 		}
 		sc.close();
 		
-		Solution sol = new Solution();
 		System.out.println("\nThe configuration matrix is:");
-		ex.printMatrix(InitialConfig.getConfigMatrix());
+		ex.printMatrix(InitialConfig.getConfigFromFile());
 		
 		System.out.print("Please, wait. Looking for optimal solution... ");
-		sol.findOptimalSolution();;
+		int[][] optimalSolution = Solution.getOptimalSolution(InitialConfig.getConfigFromFile());
 		System.out.print("Done.\n");
 		
 		/* 
@@ -95,14 +93,14 @@ public class Execution {
 		ex.printMatrix(qp.getQuietPatterns());
 		*/
 		
-		if (sol.getSolutions() == null)
+		if (optimalSolution == null)
 			System.out.println("\nSuch configuration does not have any solutions!");
 		else {
 			/*System.out.println("\nAll solutions:");
 			ex.printMatrix(sol.getSolutions());*/
 			
-			System.out.println("\nThe optimal solution (" + sol.getCountMIN() + " steps) is:");
-			ex.printMatrix(sol.getOptimalSolution());
+			System.out.println("\nThe optimal solution (" + Solution.getStepsOptimalSolution(InitialConfig.getConfigFromFile()) + " steps) is:");
+			ex.printMatrix(optimalSolution);
 		}
 		
 	}

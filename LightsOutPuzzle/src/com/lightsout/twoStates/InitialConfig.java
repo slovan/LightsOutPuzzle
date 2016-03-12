@@ -1,15 +1,15 @@
 package com.lightsout.twoStates;
 
 import java.io.*;
+import java.util.Random;
 
 // Note: This code requires JDK 7 or later.
 // This class read initial configuration from the file
 public class InitialConfig {
-	private static int[][] configMatrix; // is read from the file
-	private static int size; // size n of n*n initial configuration matrix
 
-	public InitialConfig() {
-
+	public static int[][] getConfigFromFile() {
+		int[][] configMatrix = null; // is read from the file
+		int size = 0; // size n of n*n initial configuration matrix
 		String str; // variable for reading file strings
 
 		try (BufferedReader br = new BufferedReader(new FileReader("src/input.txt"))) {
@@ -41,7 +41,7 @@ public class InitialConfig {
 
 				int colPos = 0; // position of active column in the matrix
 
-				// fulfill configuration matrix from file
+				// fill configuration matrix from file
 				for (int i = 0; i < str.length(); i++) {
 					if ((str.charAt(i) == '0') || (str.charAt(i) == '1')) {
 						if (colPos >= size) // check in case of incorrect input
@@ -62,23 +62,57 @@ public class InitialConfig {
 		} catch (Throwable exc) {
 			System.out.println(exc);
 		}
-
-	}
-
-	public static int[][] getConfigMatrix() {
 		return configMatrix;
 	}
 
-	public static void setConfigMatrix(int[][] configMatrix) {
-		InitialConfig.configMatrix = configMatrix;
+	public static int[][] getRandomConfig(int size) {
+		boolean hasSolution;
+		int[][] configMatrix = new int[size][size];
+		Random rand = new Random();	
+		
+		do {
+			for (int i = 0; i < size; i++)
+				for (int j = 0; j < size; j++)
+					configMatrix[i][j] = rand.nextInt(2);
+			if (Solution.getRank(Solution.getLightsOutMatrix(size)) == Solution.getRank(Solution.getAugmentedMatrix(Solution.getLightsOutMatrix(size), configMatrix)))
+				hasSolution = true;
+			else
+				hasSolution = false;
+		} while (!hasSolution);
+		return configMatrix;
 	}
+	
+	public static int[][] getRandomConfig(int size, boolean isSolvable) {
+		if (isSolvable)
+			return getRandomConfig(size);
+		else {
+			int[][] configMatrix = new int[size][size];
+			Random rand = new Random();
+			for (int i = 0; i < size; i++)
+				for (int j = 0; j < size; j++)
+					configMatrix[i][j] = rand.nextInt(2);
+			return configMatrix;
+		}
 
-	public static int getSize() {
-		return size;
 	}
+	
+	// write any config matrix to input.txt
+	public static void writeToFile(int[][] configMatrix) {
+		String str; // variable used to write matrix in the file
+		int size = configMatrix.length;
 
-	public static void setSize(int size) {
-		InitialConfig.size = size;
+		try (FileWriter fw = new FileWriter("src/input.txt")) {
+			for (int i = 0; i < size; i++) {
+				str = String.valueOf(configMatrix[i][0]);
+				for (int j = 1; j < size; j++) {
+					str += "," + configMatrix[i][j];
+				}
+				str += "\r\n";
+				fw.write(str);
+			}
+		} catch (IOException exc) {
+			System.err.println("I/O Error: " + exc);
+		}
 	}
-
+	
 }
