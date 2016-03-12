@@ -104,6 +104,6 @@ public class Execution {
 			System.out.println("\nThe optimal solution (" + sol.getCountMIN() + " steps) is:");
 			ex.printMatrix(sol.getOptimalSolution());
 		}
-
+		
 	}
 }
