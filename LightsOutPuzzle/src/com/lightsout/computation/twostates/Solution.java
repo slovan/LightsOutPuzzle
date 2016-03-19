@@ -1,4 +1,4 @@
-package com.lightsout.twoStates;
+package com.lightsout.computation.twostates;
 
 // find all strategies of solutions if exists
 // determine optimal solution (the least number of steps)

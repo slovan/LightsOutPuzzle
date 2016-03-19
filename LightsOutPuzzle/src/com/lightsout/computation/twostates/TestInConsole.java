@@ -1,16 +1,8 @@
-package com.lightsout.main;
+package com.lightsout.computation.twostates;
 
 import java.util.Scanner;
 
-//import com.lightsout.twoStates.AugmentedMatrix;
-//import com.lightsout.twoStates.GaussJordanElim;
-//import com.lightsout.twoStates.GaussTwoStates;
-import com.lightsout.twoStates.InitialConfig;
-//import com.lightsout.twoStates.LightsOutMatrix;
-//import com.lightsout.twoStates.QuietPatterns;
-import com.lightsout.twoStates.Solution;
-
-public class Execution {
+public class TestInConsole {
 
 	public void printMatrix(int[][] matrix) {
 		for (int row[] : matrix) {
@@ -22,7 +14,7 @@ public class Execution {
 
 	public static void main(String[] args) {
 
-		Execution ex = new Execution(); // to make possible use printMatrix method
+		TestInConsole tic = new TestInConsole(); // to make possible use printMatrix method
 		Scanner sc = new Scanner(System.in); // to read from console
 		boolean flag; // to make input from the console correct
 		String str; // user message, entered to console
@@ -57,7 +49,7 @@ public class Execution {
 		sc.close();
 		
 		System.out.println("\nThe configuration matrix is:");
-		ex.printMatrix(InitialConfig.getConfigFromFile());
+		tic.printMatrix(InitialConfig.getConfigFromFile());
 		
 		System.out.print("Please, wait. Looking for optimal solution... ");
 		int[][] optimalSolution = Solution.getOptimalSolution(InitialConfig.getConfigFromFile());
@@ -100,7 +92,7 @@ public class Execution {
 			ex.printMatrix(sol.getSolutions());*/
 			
 			System.out.println("\nThe optimal solution (" + Solution.getStepsOptimalSolution(InitialConfig.getConfigFromFile()) + " steps) is:");
-			ex.printMatrix(optimalSolution);
+			tic.printMatrix(optimalSolution);
 		}
 		
 	}
