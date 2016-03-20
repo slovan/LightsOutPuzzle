@@ -1,4 +1,4 @@
-package com.lightsout.computation.twostates;
+package com.lightsout.core.twostates;
 
 import java.io.*;
 import java.util.Random;
@@ -12,7 +12,7 @@ public class InitialConfig {
 		int size = 0; // size n of n*n initial configuration matrix
 		String str; // variable for reading file strings
 
-		try (BufferedReader br = new BufferedReader(new FileReader("src/com/lightsout/computation/twostates/input.txt"))) {
+		try (BufferedReader br = new BufferedReader(new FileReader("input.txt"))) {
 			int rowPos = 0; // position of active row in the matrix
 			while ((str = br.readLine()) != null) {
 
@@ -74,7 +74,7 @@ public class InitialConfig {
 			for (int i = 0; i < size; i++)
 				for (int j = 0; j < size; j++)
 					configMatrix[i][j] = rand.nextInt(2);
-			if (Solution.getRank(Solution.getLightsOutMatrix(size)) == Solution.getRank(Solution.getAugmentedMatrix(Solution.getLightsOutMatrix(size), configMatrix)))
+			if (Solver.getRank(Solver.getLightsOutMatrix(size)) == Solver.getRank(Solver.getAugmentedMatrix(Solver.getLightsOutMatrix(size), configMatrix)))
 				hasSolution = true;
 			else
 				hasSolution = false;
@@ -101,7 +101,7 @@ public class InitialConfig {
 		String str; // variable used to write matrix in the file
 		int size = configMatrix.length;
 
-		try (FileWriter fw = new FileWriter("src/com/lightsout/computation/twostates/input.txt")) {
+		try (FileWriter fw = new FileWriter("input.txt")) {
 			for (int i = 0; i < size; i++) {
 				str = String.valueOf(configMatrix[i][0]);
 				for (int j = 1; j < size; j++) {

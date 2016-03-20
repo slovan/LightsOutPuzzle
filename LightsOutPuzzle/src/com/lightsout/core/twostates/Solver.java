@@ -1,8 +1,10 @@
-package com.lightsout.computation.twostates;
+package com.lightsout.core.twostates;
+
+import java.util.Arrays;
 
 // find all strategies of solutions if exists
 // determine optimal solution (the least number of steps)
-public class Solution {
+public class Solver {
 
 	
 	public static int[][] getAllSolutions(int[][] configMatrix) {
@@ -302,5 +304,13 @@ public class Solution {
 				rank--;
 		}
 		return rank;
+	}
+	
+	public static int[][] copyOfMatrix(int[][] matrix) {
+		int[][] resultMatrix = new int[matrix.length][];
+		for (int i = 0; i < matrix.length; i++) {
+			resultMatrix[i] = Arrays.copyOf(matrix[i], matrix[i].length);
+		}	
+		return resultMatrix;
 	}
 }

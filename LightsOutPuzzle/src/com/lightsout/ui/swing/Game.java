@@ -22,14 +22,16 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 
-import com.lightsout.computation.twostates.InitialConfig;
+import com.lightsout.core.twostates.InitialConfig;
+import com.lightsout.core.twostates.Solver;
 
 public class Game extends JFrame implements ActionListener {
 	private int size = 5;
 	private JPanel jp;
 	private MyMenu mm;
 	private JButton[][] buttonsField;
-	private int[][] configMatrix;
+	private int[][] changedConfigMatrix;
+	private int[][] startConfigMatrix;
 
 	private static final long serialVersionUID = 1L;
 
@@ -53,10 +55,18 @@ public class Game extends JFrame implements ActionListener {
 		add(jp);
 	}
 	public void startGame() {
-		jp.removeAll();
-		configMatrix = InitialConfig.getRandomConfig(size);
+		this.startConfigMatrix = InitialConfig.getRandomConfig(size);
+		this.changedConfigMatrix = Solver.copyOfMatrix(startConfigMatrix);
+		setGame();
+	}
+	public void resetGame() {
+		this.changedConfigMatrix = Solver.copyOfMatrix(startConfigMatrix);
+		setGame();
+	}
+	public void setGame() {
 		buttonsField = new JButton[size][size];
-		
+
+		jp.removeAll();
 		jp.setBorder(BorderFactory.createLineBorder(Color.GREEN, 1));
 		jp.setPreferredSize(new Dimension(35 * size + 2, 35 * size + 2));
 		jp.setBackground(Color.GREEN);
@@ -65,7 +75,7 @@ public class Game extends JFrame implements ActionListener {
 
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				if (configMatrix[i][j] == 1) {
+				if (changedConfigMatrix[i][j] == 1) {
 					buttonsField[i][j] = new JButton(new ImageIcon("src/com/lightsout/ui/swing/orange.png"));
 				} else {
 					buttonsField[i][j] = new JButton(new ImageIcon("src/com/lightsout/ui/swing/black.png"));
@@ -80,42 +90,14 @@ public class Game extends JFrame implements ActionListener {
 				buttonsField[i][j].setActionCommand(i + " " + j);
 				buttonsField[i][j].addActionListener(this);
 			}
-		}
-	}
-	public void makeGUI() {
-		jp.removeAll();
-		configMatrix = InitialConfig.getConfigFromFile();
-		jp.setBorder(BorderFactory.createLineBorder(Color.GREEN, 1));
-		jp.setPreferredSize(new Dimension(35 * 5 + 2, 35 * 5 + 2));
-		jp.setBackground(Color.GREEN);
-		jp.setLayout(new GridLayout(5, 5));
-
-		for (int i = 0; i < 5; i++) {
-			for (int j = 0; j < 5; j++) {
-				if (configMatrix[i][j] == 1) {
-					buttonsField[i][j] = new JButton(new ImageIcon("src/com/lightsout/ui/swing/orange.png"));
-				} else {
-					buttonsField[i][j] = new JButton(new ImageIcon("src/com/lightsout/ui/swing/black.png"));
-				}
-				jp.add(buttonsField[i][j]);
-				buttonsField[i][j].setBorder(BorderFactory.createEmptyBorder());
-				buttonsField[i][j].setContentAreaFilled(false);
-				buttonsField[i][j].setRolloverIcon(new ImageIcon("src/com/lightsout/ui/swing/grey.png"));
-				buttonsField[i][j].setPressedIcon(new ImageIcon("src/com/lightsout/ui/swing/orange2.png"));
-				// buttonsField[i][j].setSelectedIcon(new
-				// ImageIcon("src/orange.png"));
-				buttonsField[i][j].setActionCommand(i + " " + j);
-				buttonsField[i][j].addActionListener(this);
-			}
-		}
-		
+		}		
 	}
 
 	public void changeButtons() {
 		boolean gameOver = true;
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
-				if (configMatrix[i][j] == 1) {
+				if (changedConfigMatrix[i][j] == 1) {
 					buttonsField[i][j].setIcon(new ImageIcon("src/com/lightsout/ui/swing/orange.png"));
 					gameOver = false;
 				} else {
@@ -149,15 +131,15 @@ public class Game extends JFrame implements ActionListener {
 		int row = Integer.parseInt(adress[0]);
 		int col = Integer.parseInt(adress[1]);
 
-		configMatrix[row][col] = ++configMatrix[row][col] % 2;
+		changedConfigMatrix[row][col] = ++changedConfigMatrix[row][col] % 2;
 		if (row - 1 >= 0)
-			configMatrix[row - 1][col] = ++configMatrix[row - 1][col] % 2;
+			changedConfigMatrix[row - 1][col] = ++changedConfigMatrix[row - 1][col] % 2;
 		if (row + 1 < size)
-			configMatrix[row + 1][col] = ++configMatrix[row + 1][col] % 2;
+			changedConfigMatrix[row + 1][col] = ++changedConfigMatrix[row + 1][col] % 2;
 		if (col - 1 >= 0)
-			configMatrix[row][col - 1] = ++configMatrix[row][col - 1] % 2;
+			changedConfigMatrix[row][col - 1] = ++changedConfigMatrix[row][col - 1] % 2;
 		if (col + 1 < size)
-			configMatrix[row][col + 1] = ++configMatrix[row][col + 1] % 2;
+			changedConfigMatrix[row][col + 1] = ++changedConfigMatrix[row][col + 1] % 2;
 		changeButtons();
 	}
 
@@ -244,8 +226,13 @@ public class Game extends JFrame implements ActionListener {
 			}
 				
 			
-			if (comStr.equals("Reset"))
-				makeGUI();
+			if (comStr.equals("Reset")) {
+				if (startConfigMatrix == null)
+					startGame();
+				else
+					resetGame();
+			}
+				
 			
 		}
 	

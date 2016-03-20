@@ -1,10 +1,10 @@
-package com.lightsout.computation.twostates;
+package com.lightsout.core.twostates;
 
 import java.util.Scanner;
 
 public class TestInConsole {
 
-	public void printMatrix(int[][] matrix) {
+	public static void printMatrix(int[][] matrix) {
 		for (int row[] : matrix) {
 			for (int elem : row)
 				System.out.printf("%1d ", elem);
@@ -14,7 +14,25 @@ public class TestInConsole {
 
 	public static void main(String[] args) {
 
-		TestInConsole tic = new TestInConsole(); // to make possible use printMatrix method
+		// ******* Test copyOfMatrix method *******
+		/*
+		int[][] array = InitialConfig.getRandomConfig(5);
+		int[][] clone = Solution.copyOfMatrix(array);
+		for (int i = 0; i < clone.length; i ++) {
+			for (int j = 0; j < array[i].length; j++) {
+				System.out.print(System.identityHashCode(array[i]) + "  ");
+			}
+			System.out.println();
+			for (int j = 0; j < clone[i].length; j++){
+				System.out.print(System.identityHashCode(clone[i]) + "  ");		    
+			}
+			System.out.println();
+			System.out.println("-----");
+		}
+		*/
+		
+		// ******* Test solution*******
+		/*
 		Scanner sc = new Scanner(System.in); // to read from console
 		boolean flag; // to make input from the console correct
 		String str; // user message, entered to console
@@ -49,51 +67,28 @@ public class TestInConsole {
 		sc.close();
 		
 		System.out.println("\nThe configuration matrix is:");
-		tic.printMatrix(InitialConfig.getConfigFromFile());
+		printMatrix(InitialConfig.getConfigFromFile());
 		
 		System.out.print("Please, wait. Looking for optimal solution... ");
-		int[][] optimalSolution = Solution.getOptimalSolution(InitialConfig.getConfigFromFile());
+		int[][] optimalSolution = Solver.getOptimalSolution(InitialConfig.getConfigFromFile());
 		System.out.print("Done.\n");
 		
-		/* 
-		LightsOutMatrix lom = new LightsOutMatrix();
-		System.out.println("\nLights out matrix is: ");
-		ex.printMatrix(lom.getLightsOutMatrix());
-		*/
-
-		/*
-		GaussTwoStates geb = new GaussTwoStates(lom.getLightsOutMatrix());
-		System.out.println("\nThe rank of matrix is: " + geb.getRank() + ".");
-		ex.printMatrix(geb.getMatrix());
-		*/
-		
-		/*
-		AugmentedMatrix augm = new AugmentedMatrix();
-		System.out.println("\nThe augmented matrix:");
-		ex.printMatrix(augm.getAugMatrix());
-		*/
-		
-		/*
-		GaussJordanElim gje = new GaussJordanElim(augm.getAugMatrix());
-		System.out.println("\nAfter Gauss-Jordan elimination:");
-		ex.printMatrix(gje.getMatrix());
-		*/
-		
-		/*
-		QuietPatterns qp = new QuietPatterns();
-		System.out.println("\nQuiet Patterns:");
-		ex.printMatrix(qp.getQuietPatterns());
-		*/
 		
 		if (optimalSolution == null)
 			System.out.println("\nSuch configuration does not have any solutions!");
-		else {
-			/*System.out.println("\nAll solutions:");
-			ex.printMatrix(sol.getSolutions());*/
-			
-			System.out.println("\nThe optimal solution (" + Solution.getStepsOptimalSolution(InitialConfig.getConfigFromFile()) + " steps) is:");
-			tic.printMatrix(optimalSolution);
+		else {			
+			System.out.println("\nThe optimal solution (" + Solver.getStepsOptimalSolution(InitialConfig.getConfigFromFile()) + " steps) is:");
+			printMatrix(optimalSolution);
 		}
+		 */
+		
+		
+		// *******  Test results handling  *******
+		ResultsHandler rh1 = new ResultsHandler(3);
+		System.out.println(rh1.isBetweenWinners(new Result("vovan", 122)));
+		for (int i = 0; i < 10; i++)
+			rh1.updateResultsList(new Result("vovan"+(int)(Math.random()*300)+"", (int)(Math.random()*500)));
+		System.out.println(rh1.getResultsList());
 		
 	}
 }
