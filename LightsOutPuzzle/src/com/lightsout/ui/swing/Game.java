@@ -22,16 +22,16 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 
+import com.lightsout.core.twostates.GameProcess;
 import com.lightsout.core.twostates.InitialConfig;
-import com.lightsout.core.twostates.Solver;
 
 public class Game extends JFrame implements ActionListener {
-	private int size = 5;
+	private GameProcess gp;
+	private int size; // size of game
 	private JPanel jp;
 	private MyMenu mm;
 	private JButton[][] buttonsField;
-	private int[][] changedConfigMatrix;
-	private int[][] startConfigMatrix;
+
 
 	private static final long serialVersionUID = 1L;
 
@@ -53,18 +53,19 @@ public class Game extends JFrame implements ActionListener {
 		setLayout(new FlowLayout());
 		jp = new JPanel();
 		add(jp);
+		this.size = 5;
 	}
 	public void startGame() {
-		this.startConfigMatrix = InitialConfig.getRandomConfig(size);
-		this.changedConfigMatrix = Solver.copyOfMatrix(startConfigMatrix);
+		this.gp = new GameProcess(InitialConfig.getRandomConfig(size));
 		setGame();
 	}
 	public void resetGame() {
-		this.changedConfigMatrix = Solver.copyOfMatrix(startConfigMatrix);
+		gp.setChangedConfigMatrix(gp.getStartConfigMatrix());
 		setGame();
 	}
 	public void setGame() {
-		buttonsField = new JButton[size][size];
+		int[][] changedConfigMatrix = gp.getChangedConfigMatrix();
+		this.buttonsField = new JButton[size][size];
 
 		jp.removeAll();
 		jp.setBorder(BorderFactory.createLineBorder(Color.GREEN, 1));
@@ -94,6 +95,7 @@ public class Game extends JFrame implements ActionListener {
 	}
 
 	public void changeButtons() {
+		int[][] changedConfigMatrix = gp.getChangedConfigMatrix();
 		boolean gameOver = true;
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
@@ -130,7 +132,9 @@ public class Game extends JFrame implements ActionListener {
 		String[] adress = ae.getActionCommand().split(" ");
 		int row = Integer.parseInt(adress[0]);
 		int col = Integer.parseInt(adress[1]);
-
+		
+		gp.makeOneStep(row, col);
+		/*
 		changedConfigMatrix[row][col] = ++changedConfigMatrix[row][col] % 2;
 		if (row - 1 >= 0)
 			changedConfigMatrix[row - 1][col] = ++changedConfigMatrix[row - 1][col] % 2;
@@ -140,6 +144,7 @@ public class Game extends JFrame implements ActionListener {
 			changedConfigMatrix[row][col - 1] = ++changedConfigMatrix[row][col - 1] % 2;
 		if (col + 1 < size)
 			changedConfigMatrix[row][col + 1] = ++changedConfigMatrix[row][col + 1] % 2;
+		*/
 		changeButtons();
 	}
 
@@ -227,7 +232,7 @@ public class Game extends JFrame implements ActionListener {
 				
 			
 			if (comStr.equals("Reset")) {
-				if (startConfigMatrix == null)
+				if (gp == null)
 					startGame();
 				else
 					resetGame();

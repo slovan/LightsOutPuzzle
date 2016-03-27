@@ -2,7 +2,7 @@ package com.lightsout.core.twostates;
 
 import java.util.Scanner;
 
-public class TestInConsole {
+public abstract class TestInConsole {
 
 	public static void printMatrix(int[][] matrix) {
 		for (int row[] : matrix) {
@@ -84,11 +84,19 @@ public class TestInConsole {
 		
 		
 		// *******  Test results handling  *******
+		/*
 		ResultsHandler rh1 = new ResultsHandler(3);
 		System.out.println(rh1.isBetweenWinners(new Result("vovan", 122)));
 		for (int i = 0; i < 10; i++)
 			rh1.updateResultsList(new Result("vovan"+(int)(Math.random()*300)+"", (int)(Math.random()*500)));
 		System.out.println(rh1.getResultsList());
+		*/
 		
+		// *******  Test game process  *******
+		int[][] matrix = InitialConfig.getRandomConfig(5);
+		GameProcess gp = new GameProcess(matrix);
+		printMatrix(gp.getStartConfigMatrix());
+		System.out.println(gp.getOptimalSteps());
+		printMatrix(gp.getOptimalSolution());
 	}
 }

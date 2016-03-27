@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 // find all strategies of solutions if exists
 // determine optimal solution (the least number of steps)
-public class Solver {
+public abstract class Solver {
 
 	
 	public static int[][] getAllSolutions(int[][] configMatrix) {
