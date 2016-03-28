@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -24,6 +25,8 @@ import javax.swing.SwingUtilities;
 
 import com.lightsout.core.twostates.GameProcess;
 import com.lightsout.core.twostates.InitialConfig;
+import com.lightsout.core.twostates.Result;
+import com.lightsout.core.twostates.ResultsHandler;
 
 public class Game extends JFrame implements ActionListener {
 	private GameProcess gp;
@@ -37,12 +40,12 @@ public class Game extends JFrame implements ActionListener {
 
 	public Game(String title) throws HeadlessException {
 		super(title);
-		
+		this.size = 5;
 		mm = new MyMenu();
 		setJMenuBar(mm);
 
 		// Give the frame an initial size.
-		setSize(35 * 5 + 130, 35 * 5 + 75);
+		setSize(300, 330);
 
 		// Terminate the program when the user closes the application.
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -52,16 +55,31 @@ public class Game extends JFrame implements ActionListener {
 
 		setLayout(new FlowLayout());
 		jp = new JPanel();
+		JButton startGame = new JButton(new ImageIcon("images/game-start.png"));
+		startGame.setBorder(BorderFactory.createEmptyBorder());
+		startGame.setContentAreaFilled(false);
+		startGame.addActionListener((ae) -> startGame());
+		jp.add(startGame);
 		add(jp);
-		this.size = 5;
+		
 	}
+	
 	public void startGame() {
 		this.gp = new GameProcess(InitialConfig.getRandomConfig(size));
 		setGame();
 	}
 	public void resetGame() {
-		gp.setChangedConfigMatrix(gp.getStartConfigMatrix());
+		this.gp = new GameProcess(gp.getStartConfigMatrix());
 		setGame();
+	}
+	public void stopGame() {
+		getContentPane().removeAll();
+		setSize(350, 230);
+		setLayout(new FlowLayout());
+		jp = new JPanel();
+		JLabel label = new JLabel("", new ImageIcon("images/game-over.png"), JLabel.CENTER);
+		jp.add(label);
+		add(jp);
 	}
 	public void setGame() {
 		int[][] changedConfigMatrix = gp.getChangedConfigMatrix();
@@ -77,19 +95,21 @@ public class Game extends JFrame implements ActionListener {
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				if (changedConfigMatrix[i][j] == 1) {
-					buttonsField[i][j] = new JButton(new ImageIcon("src/com/lightsout/ui/swing/orange.png"));
+					buttonsField[i][j] = new JButton(new ImageIcon("images/light_yellow.png"));
+					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/yellow.png"));
+					buttonsField[i][j].setPressedIcon(new ImageIcon("images/yellow_boom.png"));
 				} else {
-					buttonsField[i][j] = new JButton(new ImageIcon("src/com/lightsout/ui/swing/black.png"));
+					buttonsField[i][j] = new JButton(new ImageIcon("images/black.png"));
+					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/grey.png"));
+					buttonsField[i][j].setPressedIcon(new ImageIcon("images/grey_boom.png"));
 				}
 				jp.add(buttonsField[i][j]);
 				buttonsField[i][j].setBorder(BorderFactory.createEmptyBorder());
 				buttonsField[i][j].setContentAreaFilled(false);
-				buttonsField[i][j].setRolloverIcon(new ImageIcon("src/com/lightsout/ui/swing/grey.png"));
-				buttonsField[i][j].setPressedIcon(new ImageIcon("src/com/lightsout/ui/swing/orange2.png"));
-				// buttonsField[i][j].setSelectedIcon(new
-				// ImageIcon("src/orange.png"));
+				
 				buttonsField[i][j].setActionCommand(i + " " + j);
 				buttonsField[i][j].addActionListener(this);
+				
 			}
 		}		
 	}
@@ -100,20 +120,43 @@ public class Game extends JFrame implements ActionListener {
 		for (int i = 0; i < size; i++) {
 			for (int j = 0; j < size; j++) {
 				if (changedConfigMatrix[i][j] == 1) {
-					buttonsField[i][j].setIcon(new ImageIcon("src/com/lightsout/ui/swing/orange.png"));
+					buttonsField[i][j].setIcon(new ImageIcon("images/light_yellow.png"));
+					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/yellow.png"));
+					buttonsField[i][j].setPressedIcon(new ImageIcon("images/yellow_boom.png"));
 					gameOver = false;
 				} else {
-					buttonsField[i][j].setIcon(new ImageIcon("src/com/lightsout/ui/swing/black.png"));
+					buttonsField[i][j].setIcon(new ImageIcon("images/black.png"));
+					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/grey.png"));
+					buttonsField[i][j].setPressedIcon(new ImageIcon("images/grey_boom.png"));
 				}
 			}
 		}
-		if (gameOver)
+		if (gameOver){
+			gp.computeScore();
+			stopGame();
 			congrat();
+		}
+	}
+	
+	public void showSolution() {
+		int[][] solution = gp.getCurrentSolution();
+		int[][] changedConfigMatrix = gp.getChangedConfigMatrix();
+		for (int i = 0; i < size; i++) {
+			for (int j = 0; j < size; j++) {
+				if (solution[i][j] == 1) {
+					if (changedConfigMatrix[i][j] == 1) {
+						buttonsField[i][j].setIcon(new ImageIcon("images/sol_light.png"));
+					} else {
+						buttonsField[i][j].setIcon(new ImageIcon("images/sol_black.png"));
+					}
+				}
+			}
+		}
 	}
 
 	public void congrat() {
 		JDialog.setDefaultLookAndFeelDecorated(true);
-		String result = JOptionPane.showInputDialog(null, "Please, enter your name:", "Congratulations!",
+		String name = JOptionPane.showInputDialog(null, "Please, enter your name:", "Congratulations!",
 				JOptionPane.INFORMATION_MESSAGE);
 		/*
 		 * int response = JOptionPane.showConfirmDialog(null,
@@ -125,7 +168,19 @@ public class Game extends JFrame implements ActionListener {
 		 * JOptionPane.CLOSED_OPTION) { System.out.println("JOptionPane closed"
 		 * ); }
 		 */
-		System.out.println(result + " has finished the game!");
+		if ((name == null) || (name.equals("")))
+			name = "anonym";
+		System.out.println(name + " has finished the game!");
+		System.out.println("Optimal steps: " + gp.getOptimalSteps());
+		System.out.println("User steps: " + gp.getUserSteps());
+		System.out.println("Score: " + gp.getScore());
+		ResultsHandler rh = new ResultsHandler(size);
+		Result result = new Result(name, gp.getScore(), gp.getUserSteps(), gp.getOptimalSteps());
+		if(rh.isBetweenWinners(result))
+			rh.updateResultsList(result);
+		SwingUtilities.invokeLater(() -> new ShowResults(size));
+
+		
 	}
 
 	public void actionPerformed(ActionEvent ae) {
@@ -134,28 +189,17 @@ public class Game extends JFrame implements ActionListener {
 		int col = Integer.parseInt(adress[1]);
 		
 		gp.makeOneStep(row, col);
-		/*
-		changedConfigMatrix[row][col] = ++changedConfigMatrix[row][col] % 2;
-		if (row - 1 >= 0)
-			changedConfigMatrix[row - 1][col] = ++changedConfigMatrix[row - 1][col] % 2;
-		if (row + 1 < size)
-			changedConfigMatrix[row + 1][col] = ++changedConfigMatrix[row + 1][col] % 2;
-		if (col - 1 >= 0)
-			changedConfigMatrix[row][col - 1] = ++changedConfigMatrix[row][col - 1] % 2;
-		if (col + 1 < size)
-			changedConfigMatrix[row][col + 1] = ++changedConfigMatrix[row][col + 1] % 2;
-		*/
 		changeButtons();
 	}
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> new Game("The Lights Out Puzzle"));
-		System.out.println("\nThe configuration matrix is:");
-		printMatrix(InitialConfig.getConfigFromFile());
+		//System.out.println("\nThe configuration matrix is:");
+		//printMatrix(InitialConfig.getConfigFromFile());
 		
 
 	}
-
+/*
 	public static void printMatrix(int[][] matrix) {
 		for (int row[] : matrix) {
 			for (int elem : row)
@@ -163,7 +207,7 @@ public class Game extends JFrame implements ActionListener {
 			System.out.println();
 		}
 	}
-
+*/
 
 	class MyMenu extends JMenuBar implements ActionListener {
 
@@ -182,11 +226,14 @@ public class Game extends JFrame implements ActionListener {
 				jmiSize2.addActionListener((ae) -> size = 5);
 				JRadioButtonMenuItem jmiSize3 = new JRadioButtonMenuItem("7 x 7");
 				jmiSize3.addActionListener((ae) -> size = 7);
-				JRadioButtonMenuItem jmiSize4 = new JRadioButtonMenuItem("11 x 11");
-				jmiSize4.addActionListener((ae) -> size = 11);
+				JRadioButtonMenuItem jmiSize4 = new JRadioButtonMenuItem("Customize...");
+				jmiSize4.addActionListener((ae) -> {
+					size = 11;
+					});
 				jmSize.add(jmiSize1);
 				jmSize.add(jmiSize2);
 				jmSize.add(jmiSize3);
+				jmSize.addSeparator();
 				jmSize.add(jmiSize4);
 				//Create button group for the radio button
 				ButtonGroup bg = new ButtonGroup();
@@ -195,11 +242,13 @@ public class Game extends JFrame implements ActionListener {
 				bg.add(jmiSize3);
 				bg.add(jmiSize4);
 			JMenuItem jmiSave = new JMenuItem("Save");
+			JMenuItem jmiShowSol = new JMenuItem("Show solution");
 			JMenuItem jmiExit = new JMenuItem("Exit");
 			jmGame.add(jmiNew);
 			jmGame.add(jmiReset);
 			jmGame.add(jmSize);
 			jmGame.add(jmiSave);
+			jmGame.add(jmiShowSol);
 			jmGame.addSeparator();
 			jmGame.add(jmiExit);
 			add(jmGame);
@@ -209,6 +258,7 @@ public class Game extends JFrame implements ActionListener {
 			jmiReset.addActionListener(this);
 			jmSize.addActionListener(this);
 			jmiSave.addActionListener(this);
+			jmiShowSol.addActionListener(this);
 			jmiExit.addActionListener(this);
 		}
 	
@@ -221,24 +271,22 @@ public class Game extends JFrame implements ActionListener {
 		public void actionPerformed(ActionEvent ae) {
 			// Get the action command from the menu selection.
 			String comStr = ae.getActionCommand();
-	
-			// If user chooses Exit, then exit the program.
-			if (comStr.equals("Exit"))
-				System.exit(0);
-			
-			if (comStr.equals("New Game")) {
-				startGame();
-			}
+
+			switch (comStr) {
+				case "New Game": startGame(); break;
+				case "Reset":
+					if ((gp != null) && (gp.getStartConfigMatrix().length == Game.this.size)) {
+						resetGame();
+					} else
+						startGame();
+					break;
+				case "Show solution": 
+					gp.findCurrentSolution();
+					showSolution(); 
+					break;
+				case "Exit": System.exit(0); break;
 				
-			
-			if (comStr.equals("Reset")) {
-				if (gp == null)
-					startGame();
-				else
-					resetGame();
 			}
-				
-			
 		}
 	
 	}

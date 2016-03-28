@@ -12,7 +12,7 @@ public class InitialConfig {
 		int size = 0; // size n of n*n initial configuration matrix
 		String str; // variable for reading file strings
 
-		try (BufferedReader br = new BufferedReader(new FileReader("input.txt"))) {
+		try (BufferedReader br = new BufferedReader(new FileReader("input/input.txt"))) {
 			int rowPos = 0; // position of active row in the matrix
 			while ((str = br.readLine()) != null) {
 

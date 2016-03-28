@@ -97,6 +97,5 @@ public abstract class TestInConsole {
 		GameProcess gp = new GameProcess(matrix);
 		printMatrix(gp.getStartConfigMatrix());
 		System.out.println(gp.getOptimalSteps());
-		printMatrix(gp.getOptimalSolution());
 	}
 }

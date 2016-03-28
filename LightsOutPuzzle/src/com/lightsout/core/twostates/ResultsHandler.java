@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 public class ResultsHandler {
 	private int sizeOfGame;
-	private int quantityPlaces;
+	private int quantityPlaces; // quantity of saved places
 	private ArrayList<Result> resultsList;
 	private String pathToFile;
 
@@ -39,22 +39,25 @@ public class ResultsHandler {
 			String str; // read row
 
 			while ((str = br.readLine()) != null) {
-				String gamerName = "";
-				int gamerScore = 0;
-
 				// in case of mistaken empty row
 				if (str.equals(""))
 					continue;
+				
+				String gamerName = "";
+				int gamerScore = 0;
+				int gamerSteps = 0;
+				int optimalSteps = 0;
 
-				for (int i = 0; i < str.length(); i++) {
-					if (str.charAt(i) == '\t') {
-						gamerName = str.substring(0, i);
-						gamerScore = Integer.parseInt(str.substring(i + 1, str.length()));
-						break;
-					}
+				String[] data = str.split("\t");
+				for (int i = 0; i < data.length; i++) {
+					switch (i) {
+						case 0: gamerName = data[i]; break;
+						case 1: gamerScore = Integer.parseInt(data[i]); break;
+						case 2: gamerSteps = Integer.parseInt(data[i]); break;
+						case 3: optimalSteps = Integer.parseInt(data[i]); break;
+					}		
 				}
-
-				result.add(new Result(gamerName, gamerScore));
+				result.add(new Result(gamerName, gamerScore, gamerSteps, optimalSteps));
 			}
 		} catch (IOException exc) {
 			System.out.println("I/O Error: " + exc);
@@ -72,7 +75,7 @@ public class ResultsHandler {
 
 		try (FileWriter fw = new FileWriter(pathToFile)) {
 			for (Result res : list) {
-				String str = res.getGamerName() + "\t" + res.getGamerScore() + "\r\n";
+				String str = res.getGamerName() + "\t" + res.getGamerScore() + "\t" + res.getGamerSteps() + "\t" + res.getOptimalSteps() + "\r\n";
 				fw.write(str);
 			}
 		} catch (IOException exc) {

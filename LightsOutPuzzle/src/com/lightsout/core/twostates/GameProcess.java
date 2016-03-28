@@ -2,19 +2,31 @@ package com.lightsout.core.twostates;
 
 public class GameProcess {
 	private int userSteps; // quantity of user's steps
+	private int timesOfShowingSolution;
 	private int score; // total score
 	private int optimalSteps;
 	private int[][] startConfigMatrix;
 	private int[][] changedConfigMatrix;
-	private int[][] optimalSolution;
+	private int[][] currentOptimalSolution;
 
 	public GameProcess(int[][] startConfigMatrix) {
 		this.startConfigMatrix = startConfigMatrix;
 		this.changedConfigMatrix = Solver.copyOfMatrix(startConfigMatrix);
 		this.userSteps = 0;
 		this.score = 0;
-		this.optimalSolution = Solver.getOptimalSolution(startConfigMatrix);
+		this.timesOfShowingSolution = 0;
+		this.currentOptimalSolution = null;
 		this.optimalSteps = Solver.getStepsOptimalSolution(startConfigMatrix);
+	}
+	
+	public void computeScore() {
+		float coeff1 = 0.99f;
+		float coeff2 = 0.5f;
+		int coeffPow1 = this.userSteps - this.optimalSteps;
+		int coeffPow2 = this.timesOfShowingSolution;
+		int maxScore = (int) Math.pow(this.startConfigMatrix.length * 10, 2);
+		
+		this.score = (int) (maxScore * Math.pow(coeff1, coeffPow1) * Math.pow(coeff2, coeffPow2));
 	}
 
 	public void makeOneStep(int row, int column) {
@@ -31,53 +43,34 @@ public class GameProcess {
 			changedConfigMatrix[row][column + 1] = ++changedConfigMatrix[row][column + 1] % 2;
 		this.userSteps++;
 	}
+	
+	public void findCurrentSolution() {
+		this.timesOfShowingSolution++;
+		this.currentOptimalSolution = Solver.getOptimalSolution(changedConfigMatrix);	
+	}
 
 	public int getUserSteps() {
 		return userSteps;
-	}
-
-	public void setUserSteps(int userSteps) {
-		this.userSteps = userSteps;
 	}
 
 	public int getScore() {
 		return score;
 	}
 
-	public void setScore(int score) {
-		this.score = score;
-	}
-
 	public int getOptimalSteps() {
 		return optimalSteps;
-	}
-
-	public void setOptimalSteps(int optimalSteps) {
-		this.optimalSteps = optimalSteps;
 	}
 
 	public int[][] getStartConfigMatrix() {
 		return startConfigMatrix;
 	}
 
-	public void setStartConfigMatrix(int[][] startConfigMatrix) {
-		this.startConfigMatrix = startConfigMatrix;
-	}
-
 	public int[][] getChangedConfigMatrix() {
 		return changedConfigMatrix;
 	}
 
-	public void setChangedConfigMatrix(int[][] changedConfigMatrix) {
-		this.changedConfigMatrix = changedConfigMatrix;
-	}
-
-	public int[][] getOptimalSolution() {
-		return optimalSolution;
-	}
-
-	public void setOptimalSolution(int[][] optimalSolution) {
-		this.optimalSolution = optimalSolution;
+	public int[][] getCurrentSolution() {
+		return currentOptimalSolution;
 	}
 
 }

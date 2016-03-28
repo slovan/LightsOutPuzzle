@@ -4,10 +4,14 @@ package com.lightsout.core.twostates;
 public class Result {
 	private String gamerName;
 	private int gamerScore;
+	private int gamerSteps;
+	private int optimalSteps;
 	
-	public Result(String gamerName, int gamerScore) {
+	public Result(String gamerName, int gamerScore, int gamerSteps, int optimalSteps) {
 		this.gamerName = gamerName;
 		this.gamerScore = gamerScore;
+		this.gamerSteps = gamerSteps;
+		this.optimalSteps = optimalSteps;
 	}
 
 	public String getGamerName() {
@@ -26,7 +30,26 @@ public class Result {
 		this.gamerScore = gamerResult;
 	}
 	
-	public String toString() {
-		return this.gamerName + "\t" + this.gamerScore;
+	public int getGamerSteps() {
+		return gamerSteps;
 	}
+
+	public void setGamerSteps(int gamerSteps) {
+		this.gamerSteps = gamerSteps;
+	}
+
+	public int getOptimalSteps() {
+		return optimalSteps;
+	}
+
+	public void setOptimalSteps(int optimalSteps) {
+		this.optimalSteps = optimalSteps;
+	}
+
+	@Override
+	public String toString() {
+		return "Result [gamerName=" + gamerName + ", gamerScore=" + gamerScore + ", gamerSteps=" + gamerSteps
+				+ ", optimalSteps=" + optimalSteps + "]";
+	}
+
 }
