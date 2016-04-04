@@ -12,7 +12,6 @@ import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -27,6 +26,7 @@ import com.lightsout.core.twostates.GameProcess;
 import com.lightsout.core.twostates.InitialConfig;
 import com.lightsout.core.twostates.Result;
 import com.lightsout.core.twostates.ResultsHandler;
+import com.lightsout.core.twostates.SaveLoad;
 
 public class Game extends JFrame implements ActionListener {
 	private GameProcess gp;
@@ -155,19 +155,8 @@ public class Game extends JFrame implements ActionListener {
 	}
 
 	public void congrat() {
-		JDialog.setDefaultLookAndFeelDecorated(true);
-		String name = JOptionPane.showInputDialog(null, "Please, enter your name:", "Congratulations!",
-				JOptionPane.INFORMATION_MESSAGE);
-		/*
-		 * int response = JOptionPane.showConfirmDialog(null,
-		 * "Do you want to continue?", "Confirm",
-		 * JOptionPane.YES_NO_CANCEL_OPTION, JOptionPane.INFORMATION_MESSAGE);
-		 * if (response == JOptionPane.NO_OPTION) { System.out.println(
-		 * "No button clicked"); } else if (response == JOptionPane.YES_OPTION)
-		 * { System.out.println("Yes button clicked"); } else if (response ==
-		 * JOptionPane.CLOSED_OPTION) { System.out.println("JOptionPane closed"
-		 * ); }
-		 */
+		String name = JOptionPane.showInputDialog(null, "Please, enter your name:", 
+				"Congratulations!", JOptionPane.INFORMATION_MESSAGE);
 		if ((name == null) || (name.equals("")))
 			name = "anonym";
 		System.out.println(name + " has finished the game!");
@@ -228,7 +217,15 @@ public class Game extends JFrame implements ActionListener {
 				jmiSize3.addActionListener((ae) -> size = 7);
 				JRadioButtonMenuItem jmiSize4 = new JRadioButtonMenuItem("Customize...");
 				jmiSize4.addActionListener((ae) -> {
-					size = 11;
+					String[] possibleValues = { "3 x 3", "4 x 4", "5 x 5", "6 x 6",
+							"7 x 7", "8 x 8", "9 x 9", "10 x 10", "11 x 11", "12 x 12"};
+					String value = (String) JOptionPane.showInputDialog(null, "Choose desired size:", 
+							"Customize size of game", JOptionPane.QUESTION_MESSAGE, null, possibleValues, 
+							possibleValues[0]);
+					int posInStr = 0;
+					while (value.charAt(posInStr) >= '0' && value.charAt(posInStr) <= '9')
+						posInStr++;
+					size = Integer.parseInt(value.substring(0, posInStr));
 					});
 				jmSize.add(jmiSize1);
 				jmSize.add(jmiSize2);
@@ -242,12 +239,14 @@ public class Game extends JFrame implements ActionListener {
 				bg.add(jmiSize3);
 				bg.add(jmiSize4);
 			JMenuItem jmiSave = new JMenuItem("Save");
+			JMenuItem jmiLoad = new JMenuItem("Load");
 			JMenuItem jmiShowSol = new JMenuItem("Show solution");
 			JMenuItem jmiExit = new JMenuItem("Exit");
 			jmGame.add(jmiNew);
 			jmGame.add(jmiReset);
 			jmGame.add(jmSize);
 			jmGame.add(jmiSave);
+			jmGame.add(jmiLoad);
 			jmGame.add(jmiShowSol);
 			jmGame.addSeparator();
 			jmGame.add(jmiExit);
@@ -258,6 +257,7 @@ public class Game extends JFrame implements ActionListener {
 			jmiReset.addActionListener(this);
 			jmSize.addActionListener(this);
 			jmiSave.addActionListener(this);
+			jmiLoad.addActionListener(this);
 			jmiShowSol.addActionListener(this);
 			jmiExit.addActionListener(this);
 		}
@@ -279,6 +279,13 @@ public class Game extends JFrame implements ActionListener {
 						resetGame();
 					} else
 						startGame();
+					break;
+				case "Save": 
+					SaveLoad.saveGame(gp);
+					break;
+				case "Load":
+					Game.this.gp = SaveLoad.loadSavedGame();
+					Game.this.changeButtons();
 					break;
 				case "Show solution": 
 					gp.findCurrentSolution();

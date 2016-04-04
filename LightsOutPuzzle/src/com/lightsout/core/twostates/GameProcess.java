@@ -73,4 +73,20 @@ public class GameProcess {
 		return currentOptimalSolution;
 	}
 
+	public int getTimesOfShowingSolution() {
+		return timesOfShowingSolution;
+	}
+
+	public void setTimesOfShowingSolution(int timesOfShowingSolution) {
+		this.timesOfShowingSolution = timesOfShowingSolution;
+	}
+
+	public void setUserSteps(int userSteps) {
+		this.userSteps = userSteps;
+	}
+
+	public void setChangedConfigMatrix(int[][] changedConfigMatrix) {
+		this.changedConfigMatrix = changedConfigMatrix;
+	}
+
 }
