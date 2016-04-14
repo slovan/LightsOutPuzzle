@@ -21,6 +21,9 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.plaf.metal.MetalMenuBarUI;
+import javax.swing.plaf.synth.SynthMenuBarUI;
 
 import com.lightsout.core.twostates.GameProcess;
 import com.lightsout.core.twostates.InitialConfig;
@@ -56,6 +59,7 @@ public class Game extends JFrame implements ActionListener {
 		setLayout(new FlowLayout());
 		jp = new JPanel();
 		JButton startGame = new JButton(new ImageIcon("images/game-start.png"));
+		startGame.setFocusable(false);
 		startGame.setBorder(BorderFactory.createEmptyBorder());
 		startGame.setContentAreaFilled(false);
 		startGame.addActionListener((ae) -> startGame());
@@ -106,6 +110,7 @@ public class Game extends JFrame implements ActionListener {
 				jp.add(buttonsField[i][j]);
 				buttonsField[i][j].setBorder(BorderFactory.createEmptyBorder());
 				buttonsField[i][j].setContentAreaFilled(false);
+				buttonsField[i][j].setFocusable(false);
 				
 				buttonsField[i][j].setActionCommand(i + " " + j);
 				buttonsField[i][j].addActionListener(this);
@@ -182,6 +187,9 @@ public class Game extends JFrame implements ActionListener {
 	}
 
 	public static void main(String[] args) {
+		try {
+	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+	    } catch (Exception e) { }
 		SwingUtilities.invokeLater(() -> new Game("The Lights Out Puzzle"));
 		//System.out.println("\nThe configuration matrix is:");
 		//printMatrix(InitialConfig.getConfigFromFile());
@@ -204,7 +212,9 @@ public class Game extends JFrame implements ActionListener {
 		MyMenu() {
 			super();
 			// Create the Game menu.
+			
 			JMenu jmGame = new JMenu("Game");
+			//JMenu 
 			JMenuItem jmiNew = new JMenuItem("New Game");
 			JMenuItem jmiReset = new JMenuItem("Reset");
 			JMenu jmSize = new JMenu("Size");
@@ -222,11 +232,13 @@ public class Game extends JFrame implements ActionListener {
 					String value = (String) JOptionPane.showInputDialog(null, "Choose desired size:", 
 							"Customize size of game", JOptionPane.QUESTION_MESSAGE, null, possibleValues, 
 							possibleValues[0]);
-					int posInStr = 0;
-					while (value.charAt(posInStr) >= '0' && value.charAt(posInStr) <= '9')
+					if (value != null) {
+						int posInStr = 0;
+						while (value.charAt(posInStr) >= '0' && value.charAt(posInStr) <= '9')
 						posInStr++;
-					size = Integer.parseInt(value.substring(0, posInStr));
-					});
+						size = Integer.parseInt(value.substring(0, posInStr));
+					}
+				});
 				jmSize.add(jmiSize1);
 				jmSize.add(jmiSize2);
 				jmSize.add(jmiSize3);
