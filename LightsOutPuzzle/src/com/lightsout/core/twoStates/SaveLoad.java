@@ -27,8 +27,8 @@ public class SaveLoad {
 		return result;
 	}
 	
-	public static GameProcess loadSavedGame() {
-		GameProcess gp = null;
+	public static GameProcess2States loadSavedGame() {
+		GameProcess2States gp = null;
 		BufferedReader br = null;
 		PrintWriter pw = null;
 		File fr = new File(pathToFile);
@@ -99,14 +99,14 @@ public class SaveLoad {
 				System.out.println("I/O Error: " + exc);
 			}
 		}
-		gp = new GameProcess(startConfigMatrix);
+		gp = new GameProcess2States(startConfigMatrix);
 		gp.setChangedConfigMatrix(changedConfigMatrix);
 		gp.setUserSteps(userSteps);
 		gp.setTimesOfShowingSolution(timesOfShowingSolution);
 		return gp;
 	}
 	
-	public static void saveGame(GameProcess gp) {
+	public static void saveGame(GameProcess2States gp) {
 
 		try (PrintWriter pw = new PrintWriter(new FileWriter(pathToFile))) {
 			pw.println("--- Start Config ---");

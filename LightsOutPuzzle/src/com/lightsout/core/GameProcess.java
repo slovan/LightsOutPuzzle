@@ -1,22 +1,25 @@
-package com.lightsout.core.twoStates;
+package com.lightsout.core;
 
-public class GameProcess {
-	private int userSteps; // quantity of user's steps
+public abstract class GameProcess {
+
+	protected int userSteps; // quantity of user's steps
 	private int timesOfShowingSolution;
 	private int score; // total score
 	private int optimalSteps;
 	private int[][] startConfigMatrix;
-	private int[][] changedConfigMatrix;
+	protected int[][] changedConfigMatrix;
 	private int[][] currentOptimalSolution;
+	private Solver solver;
 
 	public GameProcess(int[][] startConfigMatrix) {
+		this.solver = getSolver();
 		this.startConfigMatrix = startConfigMatrix;
-		this.changedConfigMatrix = Solver2States.copyOfMatrix(startConfigMatrix);
+		this.changedConfigMatrix = solver.copyOfMatrix(startConfigMatrix);
 		this.userSteps = 0;
 		this.score = 0;
 		this.timesOfShowingSolution = 0;
 		this.currentOptimalSolution = null;
-		this.optimalSteps = Solver2States.getStepsOptimalSolution(startConfigMatrix);
+		this.optimalSteps = solver.getStepsOptimalSolution(startConfigMatrix);
 	}
 	
 	public void computeScore() {
@@ -29,24 +32,11 @@ public class GameProcess {
 		this.score = (int) (maxScore * Math.pow(coeff1, coeffPow1) * Math.pow(coeff2, coeffPow2));
 	}
 
-	public void makeOneStep(int row, int column) {
-		if (row >= changedConfigMatrix.length || column >= changedConfigMatrix.length || row < 0 || column < 0)
-			return;
-		changedConfigMatrix[row][column] = ++changedConfigMatrix[row][column] % 2;
-		if (row - 1 >= 0)
-			changedConfigMatrix[row - 1][column] = ++changedConfigMatrix[row - 1][column] % 2;
-		if (row + 1 < changedConfigMatrix.length)
-			changedConfigMatrix[row + 1][column] = ++changedConfigMatrix[row + 1][column] % 2;
-		if (column - 1 >= 0)
-			changedConfigMatrix[row][column - 1] = ++changedConfigMatrix[row][column - 1] % 2;
-		if (column + 1 < changedConfigMatrix.length)
-			changedConfigMatrix[row][column + 1] = ++changedConfigMatrix[row][column + 1] % 2;
-		this.userSteps++;
-	}
+	protected abstract void makeOneStep(int row, int column);
 	
 	public void findCurrentSolution() {
 		this.timesOfShowingSolution++;
-		this.currentOptimalSolution = Solver2States.getOptimalSolution(changedConfigMatrix);	
+		this.currentOptimalSolution = solver.getOptimalSolution(changedConfigMatrix);	
 	}
 
 	public int getUserSteps() {
@@ -88,5 +78,9 @@ public class GameProcess {
 	public void setChangedConfigMatrix(int[][] changedConfigMatrix) {
 		this.changedConfigMatrix = changedConfigMatrix;
 	}
+
+	protected abstract Solver getSolver();
+	
+	
 
 }

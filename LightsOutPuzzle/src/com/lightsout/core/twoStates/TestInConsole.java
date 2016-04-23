@@ -94,7 +94,7 @@ public abstract class TestInConsole {
 		
 		// *******  Test game process  *******
 		int[][] matrix = InitialConfig.getRandomConfig(5);
-		GameProcess gp = new GameProcess(matrix);
+		GameProcess2States gp = new GameProcess2States(matrix);
 		printMatrix(gp.getStartConfigMatrix());
 		System.out.println(gp.getOptimalSteps());
 	}
