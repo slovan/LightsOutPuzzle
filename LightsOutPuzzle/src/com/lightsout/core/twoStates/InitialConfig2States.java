@@ -1,16 +1,16 @@
-package com.lightsout.core.threeStates;
+package com.lightsout.core.twoStates;
 
 import com.lightsout.core.InitialConfig;
 import com.lightsout.core.Solver;
 
-public class InitialConfig3States extends InitialConfig {
+public class InitialConfig2States extends InitialConfig {
 
 	protected int genRandomInteger() {
-		return rand.nextInt(3);
+		return rand.nextInt(2);
 	}
 	
 	protected Solver getSolver() {
-		return new Solver3States();
+		return new Solver2States();
 	}
 	
 }
