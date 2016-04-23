@@ -6,8 +6,8 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import com.lightsout.core.twostates.Result;
-import com.lightsout.core.twostates.ResultsHandler;
+import com.lightsout.core.twoStates.Result;
+import com.lightsout.core.twoStates.ResultsHandler;
 
 public class ShowResults {
 	private int size;

@@ -1,8 +1,10 @@
-package com.lightsout.core.twostates;
+package com.lightsout.core.threeStates;
 
 import java.util.Scanner;
 
-public abstract class TestInConsole {
+import com.lightsout.core.twoStates.InitialConfig;
+
+public abstract class TestInConsole3States {
 
 	public static void printMatrix(int[][] matrix) {
 		for (int row[] : matrix) {
@@ -14,6 +16,8 @@ public abstract class TestInConsole {
 
 	public static void main(String[] args) {
 
+		
+		
 		// ******* Test copyOfMatrix method *******
 		/*
 		int[][] array = InitialConfig.getRandomConfig(5);
@@ -32,11 +36,11 @@ public abstract class TestInConsole {
 		*/
 		
 		// ******* Test solution*******
-		/*
+		
 		Scanner sc = new Scanner(System.in); // to read from console
 		boolean flag; // to make input from the console correct
 		String str; // user message, entered to console
-		
+		/*
 		System.out.println("Do you want to generate configuration matrix automatically (y/n)?");
 		do {
 			str = sc.nextLine();
@@ -48,8 +52,29 @@ public abstract class TestInConsole {
 			}
 		} while (!flag);
 		
-		if (str.equals("y")) {
+		if (str.equals("y")) {*/
+			//int[][] conf = {{0,1,1},{0,0,1},{0,0,0}};
+			int[][] conf = {{0,1},{1,1}};
 			System.out.println("Enter size of the configuration matrix to be generated.");
+			int size = sc.nextInt();
+			System.out.println("LightsOutMatrix");
+			int[][] matrix = Solver3States.getLightsOutMatrix(size);
+			printMatrix(matrix);
+			System.out.println("Gauss");
+			int[][] gauss = Solver3States.makeGaussElimination(matrix);			
+			printMatrix(gauss);
+			System.out.println("Jordan");
+			int[][] jordan = Solver3States.getAugmentedMatrix(Solver3States.getLightsOutMatrix(size), conf);
+			jordan = Solver3States.makeJordanGaussElim(jordan);
+			printMatrix(jordan);
+			System.out.println("Quiet");
+			printMatrix(Solver3States.getQuietPatterns(size));
+			System.out.println("Sol");
+			int[][] conf1 = {{0,2},{2,2}};
+			printMatrix(Solver3States.getAllSolutions(conf1));
+			System.out.println("Opt");
+			printMatrix(Solver3States.getOptimalSolution(conf1));
+			/*
 			do {
 				int size = sc.nextInt();
 				if (size > 0) {
@@ -63,24 +88,25 @@ public abstract class TestInConsole {
 					System.out.println("Please, try again. The size cannot be less than 1.");
 				}
 			} while (!flag);
-		}
+			
+		}*/
 		sc.close();
-		
+		/*
 		System.out.println("\nThe configuration matrix is:");
 		printMatrix(InitialConfig.getConfigFromFile());
 		
 		System.out.print("Please, wait. Looking for optimal solution... ");
-		int[][] optimalSolution = Solver.getOptimalSolution(InitialConfig.getConfigFromFile());
+		int[][] optimalSolution = Solver3States.getOptimalSolution(InitialConfig.getConfigFromFile());
 		System.out.print("Done.\n");
 		
 		
 		if (optimalSolution == null)
 			System.out.println("\nSuch configuration does not have any solutions!");
 		else {			
-			System.out.println("\nThe optimal solution (" + Solver.getStepsOptimalSolution(InitialConfig.getConfigFromFile()) + " steps) is:");
+			System.out.println("\nThe optimal solution (" + Solver3States.getStepsOptimalSolution(InitialConfig.getConfigFromFile()) + " steps) is:");
 			printMatrix(optimalSolution);
-		}
-		 */
+		}*/
+		
 		
 		
 		// *******  Test results handling  *******
@@ -93,9 +119,11 @@ public abstract class TestInConsole {
 		*/
 		
 		// *******  Test game process  *******
+		/*
 		int[][] matrix = InitialConfig.getRandomConfig(5);
-		GameProcess gp = new GameProcess(matrix);
+		GameProcess3States gp = new GameProcess3States(matrix);
 		printMatrix(gp.getStartConfigMatrix());
 		System.out.println(gp.getOptimalSteps());
+		*/
 	}
 }

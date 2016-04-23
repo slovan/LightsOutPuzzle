@@ -22,14 +22,12 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.plaf.metal.MetalMenuBarUI;
-import javax.swing.plaf.synth.SynthMenuBarUI;
 
-import com.lightsout.core.twostates.GameProcess;
-import com.lightsout.core.twostates.InitialConfig;
-import com.lightsout.core.twostates.Result;
-import com.lightsout.core.twostates.ResultsHandler;
-import com.lightsout.core.twostates.SaveLoad;
+import com.lightsout.core.twoStates.GameProcess;
+import com.lightsout.core.twoStates.InitialConfig;
+import com.lightsout.core.twoStates.Result;
+import com.lightsout.core.twoStates.ResultsHandler;
+import com.lightsout.core.twoStates.SaveLoad;
 
 public class Game extends JFrame implements ActionListener {
 	private GameProcess gp;
@@ -65,7 +63,6 @@ public class Game extends JFrame implements ActionListener {
 		startGame.addActionListener((ae) -> startGame());
 		jp.add(startGame);
 		add(jp);
-		
 	}
 	
 	public void startGame() {
@@ -307,6 +304,5 @@ public class Game extends JFrame implements ActionListener {
 				
 			}
 		}
-	
 	}
 }

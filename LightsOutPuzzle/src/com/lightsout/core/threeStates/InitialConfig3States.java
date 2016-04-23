@@ -1,11 +1,11 @@
-package com.lightsout.core.twostates;
+package com.lightsout.core.threeStates;
 
 import java.io.*;
 import java.util.Random;
 
 // Note: This code requires JDK 7 or later.
 // This class read initial configuration from the file
-public class InitialConfig {
+public class InitialConfig3States {
 
 	public static int[][] getConfigFromFile() {
 		int[][] configMatrix = null; // is read from the file
@@ -74,7 +74,7 @@ public class InitialConfig {
 			for (int i = 0; i < size; i++)
 				for (int j = 0; j < size; j++)
 					configMatrix[i][j] = rand.nextInt(2);
-			if (Solver.getRank(Solver.getLightsOutMatrix(size)) == Solver.getRank(Solver.getAugmentedMatrix(Solver.getLightsOutMatrix(size), configMatrix)))
+			if (Solver3States.getRank(Solver3States.getLightsOutMatrix(size)) == Solver3States.getRank(Solver3States.getAugmentedMatrix(Solver3States.getLightsOutMatrix(size), configMatrix)))
 				hasSolution = true;
 			else
 				hasSolution = false;
@@ -90,7 +90,7 @@ public class InitialConfig {
 			Random rand = new Random();
 			for (int i = 0; i < size; i++)
 				for (int j = 0; j < size; j++)
-					configMatrix[i][j] = rand.nextInt(2);
+					configMatrix[i][j] = rand.nextInt(3);
 			return configMatrix;
 		}
 

@@ -1,4 +1,4 @@
-package com.lightsout.core.twostates;
+package com.lightsout.core.twoStates;
 
 public class GameProcess {
 	private int userSteps; // quantity of user's steps
