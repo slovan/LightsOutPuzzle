@@ -74,7 +74,7 @@ public class InitialConfig {
 			for (int i = 0; i < size; i++)
 				for (int j = 0; j < size; j++)
 					configMatrix[i][j] = rand.nextInt(2);
-			if (Solver.getRank(Solver.getLightsOutMatrix(size)) == Solver.getRank(Solver.getAugmentedMatrix(Solver.getLightsOutMatrix(size), configMatrix)))
+			if (Solver2States.getRank(Solver2States.getLightsOutMatrix(size)) == Solver2States.getRank(Solver2States.getAugmentedMatrix(Solver2States.getLightsOutMatrix(size), configMatrix)))
 				hasSolution = true;
 			else
 				hasSolution = false;

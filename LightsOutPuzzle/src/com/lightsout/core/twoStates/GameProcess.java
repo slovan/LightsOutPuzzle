@@ -11,12 +11,12 @@ public class GameProcess {
 
 	public GameProcess(int[][] startConfigMatrix) {
 		this.startConfigMatrix = startConfigMatrix;
-		this.changedConfigMatrix = Solver.copyOfMatrix(startConfigMatrix);
+		this.changedConfigMatrix = Solver2States.copyOfMatrix(startConfigMatrix);
 		this.userSteps = 0;
 		this.score = 0;
 		this.timesOfShowingSolution = 0;
 		this.currentOptimalSolution = null;
-		this.optimalSteps = Solver.getStepsOptimalSolution(startConfigMatrix);
+		this.optimalSteps = Solver2States.getStepsOptimalSolution(startConfigMatrix);
 	}
 	
 	public void computeScore() {
@@ -46,7 +46,7 @@ public class GameProcess {
 	
 	public void findCurrentSolution() {
 		this.timesOfShowingSolution++;
-		this.currentOptimalSolution = Solver.getOptimalSolution(changedConfigMatrix);	
+		this.currentOptimalSolution = Solver2States.getOptimalSolution(changedConfigMatrix);	
 	}
 
 	public int getUserSteps() {
