@@ -1,4 +1,4 @@
-package com.lightsout.core.twoStates;
+package com.lightsout.core;
 
 
 public class Result {

@@ -1,4 +1,4 @@
-package com.lightsout.core.threeStates;
+package com.lightsout.core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -7,10 +7,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import com.lightsout.core.twoStates.GameProcess2States;
+
 public class SaveLoad {
-	private static final String pathToFile = "input/game.svs";
+	private final String pathToFile;
 	
-	public static boolean isSavedGame() {
+	public SaveLoad(int sizeOfGame, int quantityOfStates) {
+		this.pathToFile = new String("saves/" + quantityOfStates + "stGame/" + sizeOfGame + "x" + sizeOfGame + ".svs");
+	}
+	
+	public boolean isSavedGame() {
 		boolean result;
 		
 		try (BufferedReader br = new BufferedReader(new FileReader(pathToFile))) {			
@@ -27,8 +33,8 @@ public class SaveLoad {
 		return result;
 	}
 	
-	public static GameProcess3States loadSavedGame() {
-		GameProcess3States gp = null;
+	public GameProcess2States loadSavedGame() {
+		GameProcess2States gp = null;
 		BufferedReader br = null;
 		PrintWriter pw = null;
 		File fr = new File(pathToFile);
@@ -99,14 +105,14 @@ public class SaveLoad {
 				System.out.println("I/O Error: " + exc);
 			}
 		}
-		gp = new GameProcess3States(startConfigMatrix);
+		gp = new GameProcess2States(startConfigMatrix);
 		gp.setChangedConfigMatrix(changedConfigMatrix);
 		gp.setUserSteps(userSteps);
 		gp.setTimesOfShowingSolution(timesOfShowingSolution);
 		return gp;
 	}
 	
-	public static void saveGame(GameProcess3States gp) {
+	public void saveGame(GameProcess2States gp) {
 
 		try (PrintWriter pw = new PrintWriter(new FileWriter(pathToFile))) {
 			pw.println("--- Start Config ---");
