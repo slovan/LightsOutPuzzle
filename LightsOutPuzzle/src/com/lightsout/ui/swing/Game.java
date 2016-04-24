@@ -24,10 +24,10 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
 import com.lightsout.core.InitialConfig;
+import com.lightsout.core.Result;
+import com.lightsout.core.ResultsHandler;
+import com.lightsout.core.SaveLoad;
 import com.lightsout.core.twoStates.GameProcess2States;
-import com.lightsout.core.twoStates.Result;
-import com.lightsout.core.twoStates.ResultsHandler;
-import com.lightsout.core.twoStates.SaveLoad;
 
 public class Game extends JFrame implements ActionListener {
 	private GameProcess2States gp;
@@ -166,7 +166,7 @@ public class Game extends JFrame implements ActionListener {
 		System.out.println("Optimal steps: " + gp.getOptimalSteps());
 		System.out.println("User steps: " + gp.getUserSteps());
 		System.out.println("Score: " + gp.getScore());
-		ResultsHandler rh = new ResultsHandler(size);
+		ResultsHandler rh = new ResultsHandler(size, 2);
 		Result result = new Result(name, gp.getScore(), gp.getUserSteps(), gp.getOptimalSteps());
 		if(rh.isBetweenWinners(result))
 			rh.updateResultsList(result);
@@ -291,10 +291,12 @@ public class Game extends JFrame implements ActionListener {
 						startGame();
 					break;
 				case "Save": 
-					SaveLoad.saveGame(gp);
+					SaveLoad sl = new SaveLoad(3,2);
+					sl.saveGame(gp);
 					break;
 				case "Load":
-					Game.this.gp = SaveLoad.loadSavedGame();
+					sl = new SaveLoad(3,2);
+					Game.this.gp = sl.loadSavedGame();
 					Game.this.changeButtons();
 					break;
 				case "Show solution": 

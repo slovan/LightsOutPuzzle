@@ -1,4 +1,4 @@
-package com.lightsout.core.twoStates;
+package com.lightsout.core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,19 +10,21 @@ import java.util.ArrayList;
 public class ResultsHandler {
 	private int sizeOfGame;
 	private int quantityPlaces; // quantity of saved places
+	private int quantityOfStates;
 	private ArrayList<Result> resultsList;
 	private String pathToFile;
 
-	public ResultsHandler(int sizeOfGame, int quantityPlaces) {
+	public ResultsHandler(int sizeOfGame, int quantityOfStates, int quantityPlaces) {
 		this.sizeOfGame = sizeOfGame;
 		this.quantityPlaces = quantityPlaces;
-		this.pathToFile = "results/" + this.sizeOfGame + ".res";
+		this.quantityOfStates = quantityOfStates;
+		this.pathToFile = "results/" + this.sizeOfGame + "x" + this.sizeOfGame + "." + this.quantityOfStates + "st.res";
 		
 		this.resultsList = readFromFile();
 	}
 
-	public ResultsHandler(int sizeOfGame) {
-		this(sizeOfGame, 20);
+	public ResultsHandler(int sizeOfGame, int quantityOfStates) {
+		this(sizeOfGame, quantityOfStates , 20);
 	}
 
 	public synchronized ArrayList<Result> readFromFile() {
