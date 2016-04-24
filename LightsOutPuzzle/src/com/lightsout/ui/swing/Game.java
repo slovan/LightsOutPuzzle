@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
-import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -31,7 +30,8 @@ import com.lightsout.core.GameProcess;
 
 public class Game extends JFrame implements ActionListener {
 	private GameProcess gp;
-	private int size; // size of game
+	private int sizeOfGame; // size of game
+	private int quantityOfStates;
 	private JPanel jp;
 	private MyMenu mm;
 	private JButton[][] buttonsField;
@@ -39,9 +39,10 @@ public class Game extends JFrame implements ActionListener {
 
 	private static final long serialVersionUID = 1L;
 
-	public Game(String title) throws HeadlessException {
+	public Game(String title) {
 		super(title);
-		this.size = 5;
+		this.sizeOfGame = 5;
+		this.quantityOfStates = 2;
 		mm = new MyMenu();
 		setJMenuBar(mm);
 
@@ -66,12 +67,12 @@ public class Game extends JFrame implements ActionListener {
 	}
 	
 	public void startGame() {
-		InitialConfig initialConfig = new InitialConfig(size, 2);
-		this.gp = new GameProcess(initialConfig.getRandomConfig(), 2);
+		InitialConfig initialConfig = new InitialConfig(sizeOfGame, quantityOfStates);
+		this.gp = new GameProcess(initialConfig.getRandomConfig(), quantityOfStates);
 		setGame();
 	}
 	public void resetGame() {
-		this.gp = new GameProcess(gp.getStartConfigMatrix(), 2);
+		this.gp = new GameProcess(gp.getStartConfigMatrix(), quantityOfStates);
 		setGame();
 	}
 	public void stopGame() {
@@ -85,26 +86,35 @@ public class Game extends JFrame implements ActionListener {
 	}
 	public void setGame() {
 		int[][] changedConfigMatrix = gp.getChangedConfigMatrix();
-		this.buttonsField = new JButton[size][size];
+		this.buttonsField = new JButton[sizeOfGame][sizeOfGame];
 
 		jp.removeAll();
 		jp.setBorder(BorderFactory.createLineBorder(Color.GREEN, 1));
-		jp.setPreferredSize(new Dimension(35 * size + 2, 35 * size + 2));
+		jp.setPreferredSize(new Dimension(35 * sizeOfGame + 2, 35 * sizeOfGame + 2));
 		jp.setBackground(Color.GREEN);
-		jp.setLayout(new GridLayout(size, size));
-		this.setSize(35 * size + 130, 35 * size + 75);
+		jp.setLayout(new GridLayout(sizeOfGame, sizeOfGame));
+		this.setSize(35 * sizeOfGame + 130, 35 * sizeOfGame + 75);
 
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				if (changedConfigMatrix[i][j] == 1) {
-					buttonsField[i][j] = new JButton(new ImageIcon("images/light_yellow.png"));
-					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/yellow.png"));
-					buttonsField[i][j].setPressedIcon(new ImageIcon("images/yellow_boom.png"));
-				} else {
+		for (int i = 0; i < sizeOfGame; i++) {
+			for (int j = 0; j < sizeOfGame; j++) {
+				switch (changedConfigMatrix[i][j]) {
+				case 0:
 					buttonsField[i][j] = new JButton(new ImageIcon("images/black.png"));
 					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/grey.png"));
 					buttonsField[i][j].setPressedIcon(new ImageIcon("images/grey_boom.png"));
+					break;
+				case 1:
+					buttonsField[i][j] = new JButton(new ImageIcon("images/light_yellow.png"));
+					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/yellow.png"));
+					buttonsField[i][j].setPressedIcon(new ImageIcon("images/yellow_boom.png"));
+					break;
+				case 2:
+					buttonsField[i][j] = new JButton(new ImageIcon("images/light_red.png"));
+					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/red.png"));
+					buttonsField[i][j].setPressedIcon(new ImageIcon("images/red_boom.png"));
+					break;
 				}
+				
 				jp.add(buttonsField[i][j]);
 				buttonsField[i][j].setBorder(BorderFactory.createEmptyBorder());
 				buttonsField[i][j].setContentAreaFilled(false);
@@ -120,17 +130,26 @@ public class Game extends JFrame implements ActionListener {
 	public void changeButtons() {
 		int[][] changedConfigMatrix = gp.getChangedConfigMatrix();
 		boolean gameOver = true;
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
-				if (changedConfigMatrix[i][j] == 1) {
+		for (int i = 0; i < sizeOfGame; i++) {
+			for (int j = 0; j < sizeOfGame; j++) {
+				switch (changedConfigMatrix[i][j]) {
+				case 0:
+					buttonsField[i][j].setIcon(new ImageIcon("images/black.png"));
+					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/grey.png"));
+					buttonsField[i][j].setPressedIcon(new ImageIcon("images/grey_boom.png"));
+					break;
+				case 1:
 					buttonsField[i][j].setIcon(new ImageIcon("images/light_yellow.png"));
 					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/yellow.png"));
 					buttonsField[i][j].setPressedIcon(new ImageIcon("images/yellow_boom.png"));
 					gameOver = false;
-				} else {
-					buttonsField[i][j].setIcon(new ImageIcon("images/black.png"));
-					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/grey.png"));
-					buttonsField[i][j].setPressedIcon(new ImageIcon("images/grey_boom.png"));
+					break;
+				case 2:
+					buttonsField[i][j].setIcon(new ImageIcon("images/light_red.png"));
+					buttonsField[i][j].setRolloverIcon(new ImageIcon("images/red.png"));
+					buttonsField[i][j].setPressedIcon(new ImageIcon("images/red_boom.png"));
+					gameOver = false;
+					break;
 				}
 			}
 		}
@@ -144,13 +163,23 @@ public class Game extends JFrame implements ActionListener {
 	public void showSolution() {
 		int[][] solution = gp.getCurrentSolution();
 		int[][] changedConfigMatrix = gp.getChangedConfigMatrix();
-		for (int i = 0; i < size; i++) {
-			for (int j = 0; j < size; j++) {
+		for (int i = 0; i < sizeOfGame; i++) {
+			for (int j = 0; j < sizeOfGame; j++) {
 				if (solution[i][j] == 1) {
-					if (changedConfigMatrix[i][j] == 1) {
+					if (changedConfigMatrix[i][j] == 0) {
+						buttonsField[i][j].setIcon(new ImageIcon("images/sol_black.png"));
+					} else if (changedConfigMatrix[i][j] == 1) {
 						buttonsField[i][j].setIcon(new ImageIcon("images/sol_light.png"));
 					} else {
-						buttonsField[i][j].setIcon(new ImageIcon("images/sol_black.png"));
+						buttonsField[i][j].setIcon(new ImageIcon("images/sol_red.png"));
+					}						
+				} else if (solution[i][j] == 2) {
+					if (changedConfigMatrix[i][j] == 0) {
+						buttonsField[i][j].setIcon(new ImageIcon("images/sol_black2.png"));
+					} else if (changedConfigMatrix[i][j] == 1) {
+						buttonsField[i][j].setIcon(new ImageIcon("images/sol_light2.png"));
+					} else {
+						buttonsField[i][j].setIcon(new ImageIcon("images/sol_red2.png"));
 					}
 				}
 			}
@@ -166,11 +195,11 @@ public class Game extends JFrame implements ActionListener {
 		System.out.println("Optimal steps: " + gp.getOptimalSteps());
 		System.out.println("User steps: " + gp.getUserSteps());
 		System.out.println("Score: " + gp.getScore());
-		ResultsHandler rh = new ResultsHandler(size, 2);
+		ResultsHandler rh = new ResultsHandler(sizeOfGame, quantityOfStates);
 		Result result = new Result(name, gp.getScore(), gp.getUserSteps(), gp.getOptimalSteps());
 		if(rh.isBetweenWinners(result))
 			rh.updateResultsList(result);
-		SwingUtilities.invokeLater(() -> new ShowResults(size));
+		SwingUtilities.invokeLater(() -> new ShowResults(sizeOfGame));
 
 		
 	}
@@ -212,17 +241,19 @@ public class Game extends JFrame implements ActionListener {
 			// Create the Game menu.
 			
 			JMenu jmGame = new JMenu("Game");
+			JMenu jmSettings = new JMenu("Settings");
 			//JMenu 
 			JMenuItem jmiNew = new JMenuItem("New Game");
 			JMenuItem jmiReset = new JMenuItem("Reset");
-			JMenu jmSize = new JMenu("Size");
+			
+			JMenu jmSize = new JMenu("Size of game");
 				// Use radio buttons for the size setting
 				JRadioButtonMenuItem jmiSize1 = new JRadioButtonMenuItem("3 x 3");
-				jmiSize1.addActionListener((ae) -> size = 3);
+				jmiSize1.addActionListener((ae) -> sizeOfGame = 3);
 				JRadioButtonMenuItem jmiSize2 = new JRadioButtonMenuItem("5 x 5", true);
-				jmiSize2.addActionListener((ae) -> size = 5);
+				jmiSize2.addActionListener((ae) -> sizeOfGame = 5);
 				JRadioButtonMenuItem jmiSize3 = new JRadioButtonMenuItem("7 x 7");
-				jmiSize3.addActionListener((ae) -> size = 7);
+				jmiSize3.addActionListener((ae) -> sizeOfGame = 7);
 				JRadioButtonMenuItem jmiSize4 = new JRadioButtonMenuItem("Customize...");
 				jmiSize4.addActionListener((ae) -> {
 					String[] possibleValues = { "3 x 3", "4 x 4", "5 x 5", "6 x 6",
@@ -234,7 +265,7 @@ public class Game extends JFrame implements ActionListener {
 						int posInStr = 0;
 						while (value.charAt(posInStr) >= '0' && value.charAt(posInStr) <= '9')
 						posInStr++;
-						size = Integer.parseInt(value.substring(0, posInStr));
+						sizeOfGame = Integer.parseInt(value.substring(0, posInStr));
 					}
 				});
 				jmSize.add(jmiSize1);
@@ -243,29 +274,45 @@ public class Game extends JFrame implements ActionListener {
 				jmSize.addSeparator();
 				jmSize.add(jmiSize4);
 				//Create button group for the radio button
-				ButtonGroup bg = new ButtonGroup();
-				bg.add(jmiSize1);
-				bg.add(jmiSize2);
-				bg.add(jmiSize3);
-				bg.add(jmiSize4);
+				ButtonGroup bg1 = new ButtonGroup();
+				bg1.add(jmiSize1);
+				bg1.add(jmiSize2);
+				bg1.add(jmiSize3);
+				bg1.add(jmiSize4);
+			
+			JMenu jmStates = new JMenu("Quantity of states");
+				JRadioButtonMenuItem jmiStates1 = new JRadioButtonMenuItem("2-states game", true);
+				jmiStates1.addActionListener((ae) -> quantityOfStates = 2);
+				JRadioButtonMenuItem jmiStates2 = new JRadioButtonMenuItem("3-states game");
+				jmiStates2.addActionListener((ae) -> quantityOfStates = 3);
+				jmStates.add(jmiStates1);
+				jmStates.add(jmiStates2);
+				ButtonGroup bg2 = new ButtonGroup();
+				bg2.add(jmiStates1);
+				bg2.add(jmiStates2);
+			
+			
 			JMenuItem jmiSave = new JMenuItem("Save");
 			JMenuItem jmiLoad = new JMenuItem("Load");
 			JMenuItem jmiShowSol = new JMenuItem("Show solution");
 			JMenuItem jmiExit = new JMenuItem("Exit");
 			jmGame.add(jmiNew);
 			jmGame.add(jmiReset);
-			jmGame.add(jmSize);
 			jmGame.add(jmiSave);
 			jmGame.add(jmiLoad);
 			jmGame.add(jmiShowSol);
 			jmGame.addSeparator();
 			jmGame.add(jmiExit);
+			jmSettings.add(jmSize);
+			jmSettings.add(jmStates);
 			add(jmGame);
+			add(jmSettings);
 	
 			// Add action listeners for the menu items.
 			jmiNew.addActionListener(this);
 			jmiReset.addActionListener(this);
 			jmSize.addActionListener(this);
+			jmStates.addActionListener(this);
 			jmiSave.addActionListener(this);
 			jmiLoad.addActionListener(this);
 			jmiShowSol.addActionListener(this);
@@ -285,17 +332,17 @@ public class Game extends JFrame implements ActionListener {
 			switch (comStr) {
 				case "New Game": startGame(); break;
 				case "Reset":
-					if ((gp != null) && (gp.getStartConfigMatrix().length == Game.this.size)) {
+					if ((gp != null) && (gp.getStartConfigMatrix().length == Game.this.sizeOfGame)) {
 						resetGame();
 					} else
 						startGame();
 					break;
 				case "Save": 
-					SaveLoad sl = new SaveLoad(3,2);
+					SaveLoad sl = new SaveLoad(sizeOfGame, quantityOfStates);
 					sl.saveGame(gp);
 					break;
 				case "Load":
-					sl = new SaveLoad(3,2);
+					sl = new SaveLoad(sizeOfGame, quantityOfStates);
 					Game.this.gp = sl.loadSavedGame();
 					Game.this.changeButtons();
 					break;
