@@ -27,10 +27,10 @@ import com.lightsout.core.InitialConfig;
 import com.lightsout.core.Result;
 import com.lightsout.core.ResultsHandler;
 import com.lightsout.core.SaveLoad;
-import com.lightsout.core.twoStates.GameProcess2States;
+import com.lightsout.core.GameProcess;
 
 public class Game extends JFrame implements ActionListener {
-	private GameProcess2States gp;
+	private GameProcess gp;
 	private int size; // size of game
 	private JPanel jp;
 	private MyMenu mm;
@@ -67,11 +67,11 @@ public class Game extends JFrame implements ActionListener {
 	
 	public void startGame() {
 		InitialConfig initialConfig = new InitialConfig(size, 2);
-		this.gp = new GameProcess2States(initialConfig.getRandomConfig());
+		this.gp = new GameProcess(initialConfig.getRandomConfig(), 2);
 		setGame();
 	}
 	public void resetGame() {
-		this.gp = new GameProcess2States(gp.getStartConfigMatrix());
+		this.gp = new GameProcess(gp.getStartConfigMatrix(), 2);
 		setGame();
 	}
 	public void stopGame() {

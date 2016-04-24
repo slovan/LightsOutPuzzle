@@ -21,15 +21,11 @@ public class InitialConfig {
 		this.quantityOfStates = quantityOfStates;
 		this.rand = new Random();
 		switch (quantityOfStates) {
-		case 2:
-			this.solver = new Solver2States();
-			break;
 		case 3:
 			this.solver = new Solver3States();
 			break;
-		default:
+		case 2:
 			this.solver = new Solver2States();
-			this.quantityOfStates = 2;
 			break;
 		}
 	}
@@ -63,6 +59,7 @@ public class InitialConfig {
 		}
 	}
 
+	@Deprecated
 	public int[][] getConfigFromFile() {
 		int[][] configMatrix = null; // is read from the file
 		int size = 0; // size n of n*n initial configuration matrix
@@ -108,8 +105,8 @@ public class InitialConfig {
 		return configMatrix;
 	}
 
-	// write any config matrix to input.txt
-	public void writeToFile(int[][] configMatrix) {
+	@Deprecated
+	public void writeToFile(int[][] configMatrix) { // write any config matrix to input.txt
 		String str; // variable used to write matrix in the file
 		int size = configMatrix.length;
 

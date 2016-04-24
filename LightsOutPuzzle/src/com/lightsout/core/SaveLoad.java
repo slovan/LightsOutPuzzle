@@ -7,12 +7,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import com.lightsout.core.twoStates.GameProcess2States;
-
 public class SaveLoad {
 	private final String pathToFile;
+	private int quantityOfStates;
 	
 	public SaveLoad(int sizeOfGame, int quantityOfStates) {
+		this.quantityOfStates = quantityOfStates;
 		this.pathToFile = new String("saves/" + quantityOfStates + "stGame/" + sizeOfGame + "x" + sizeOfGame + ".svs");
 	}
 	
@@ -33,8 +33,8 @@ public class SaveLoad {
 		return result;
 	}
 	
-	public GameProcess2States loadSavedGame() {
-		GameProcess2States gp = null;
+	public GameProcess loadSavedGame() {
+		GameProcess gp = null;
 		BufferedReader br = null;
 		PrintWriter pw = null;
 		File fr = new File(pathToFile);
@@ -105,14 +105,14 @@ public class SaveLoad {
 				System.out.println("I/O Error: " + exc);
 			}
 		}
-		gp = new GameProcess2States(startConfigMatrix);
+		gp = new GameProcess(startConfigMatrix, quantityOfStates);
 		gp.setChangedConfigMatrix(changedConfigMatrix);
 		gp.setUserSteps(userSteps);
 		gp.setTimesOfShowingSolution(timesOfShowingSolution);
 		return gp;
 	}
 	
-	public void saveGame(GameProcess2States gp) {
+	public void saveGame(GameProcess gp) {
 
 		try (PrintWriter pw = new PrintWriter(new FileWriter(pathToFile))) {
 			pw.println("--- Start Config ---");
