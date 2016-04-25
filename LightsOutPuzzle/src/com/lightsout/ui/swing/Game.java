@@ -35,6 +35,7 @@ public class Game extends JFrame implements ActionListener {
 	private JPanel jp;
 	private MyMenu mm;
 	private JButton[][] buttonsField;
+	private SaveLoad sLoader;
 
 
 	private static final long serialVersionUID = 1L;
@@ -43,6 +44,8 @@ public class Game extends JFrame implements ActionListener {
 		super(title);
 		this.sizeOfGame = 5;
 		this.quantityOfStates = 2;
+		this.sLoader = new SaveLoad(sizeOfGame, quantityOfStates);
+		//this.gp = null;
 		mm = new MyMenu();
 		setJMenuBar(mm);
 
@@ -67,9 +70,15 @@ public class Game extends JFrame implements ActionListener {
 	}
 	
 	public void startGame() {
+		sLoader = new SaveLoad(sizeOfGame, quantityOfStates);
 		InitialConfig initialConfig = new InitialConfig(sizeOfGame, quantityOfStates);
 		this.gp = new GameProcess(initialConfig.getRandomConfig(), quantityOfStates);
+		//mm = new MyMenu();
+		//setJMenuBar(mm);
+		mm.changeSaveLoadState();
+		mm.changeShowSolutionState();
 		setGame();
+		
 	}
 	public void resetGame() {
 		this.gp = new GameProcess(gp.getStartConfigMatrix(), quantityOfStates);
@@ -157,6 +166,9 @@ public class Game extends JFrame implements ActionListener {
 			gp.computeScore();
 			stopGame();
 			congrat();
+			gp = null;
+			mm.changeSaveLoadState();
+			mm.changeShowSolutionState();
 		}
 	}
 	
@@ -199,7 +211,7 @@ public class Game extends JFrame implements ActionListener {
 		Result result = new Result(name, gp.getScore(), gp.getUserSteps(), gp.getOptimalSteps());
 		if(rh.isBetweenWinners(result))
 			rh.updateResultsList(result);
-		SwingUtilities.invokeLater(() -> new ShowResults(sizeOfGame));
+		SwingUtilities.invokeLater(() -> new ShowResults(sizeOfGame, quantityOfStates));
 
 		
 	}
@@ -234,7 +246,10 @@ public class Game extends JFrame implements ActionListener {
 */
 
 	class MyMenu extends JMenuBar implements ActionListener {
-
+				
+		private JMenuItem jmiSave;
+		private JMenuItem jmiLoad;
+		private JMenuItem jmiShowSol;
 		
 		MyMenu() {
 			super();
@@ -243,8 +258,8 @@ public class Game extends JFrame implements ActionListener {
 			JMenu jmGame = new JMenu("Game");
 			JMenu jmSettings = new JMenu("Settings");
 			//JMenu 
-			JMenuItem jmiNew = new JMenuItem("New Game");
-			JMenuItem jmiReset = new JMenuItem("Reset");
+			JMenuItem jmiNew = new JMenuItem("Start new game");
+			JMenuItem jmiReset = new JMenuItem("Restart game");
 			
 			JMenu jmSize = new JMenu("Size of game");
 				// Use radio buttons for the size setting
@@ -292,9 +307,13 @@ public class Game extends JFrame implements ActionListener {
 				bg2.add(jmiStates2);
 			
 			
-			JMenuItem jmiSave = new JMenuItem("Save");
-			JMenuItem jmiLoad = new JMenuItem("Load");
-			JMenuItem jmiShowSol = new JMenuItem("Show solution");
+			jmiSave = new JMenuItem("Save game...");
+			jmiLoad = new JMenuItem("Load game...");
+			changeSaveLoadState();
+			
+			jmiShowSol = new JMenuItem("Show solution");
+			changeShowSolutionState();
+			
 			JMenuItem jmiExit = new JMenuItem("Exit");
 			jmGame.add(jmiNew);
 			jmGame.add(jmiReset);
@@ -324,27 +343,48 @@ public class Game extends JFrame implements ActionListener {
 		 */
 		private static final long serialVersionUID = 7390736491903045087L;
 	
+		private void changeSaveLoadState() {
+			if (sLoader.isSavedGame()) {
+				jmiSave.setEnabled(false);
+				jmiLoad.setEnabled(true);
+			}else if (gp == null) {
+				jmiSave.setEnabled(false);
+				jmiLoad.setEnabled(false);
+			} else {
+				jmiSave.setEnabled(true);
+				jmiLoad.setEnabled(false);
+			}
+		}
+		
+		private void changeShowSolutionState() {
+			if (gp == null) {
+				jmiShowSol.setEnabled(false);
+			} else {
+				jmiShowSol.setEnabled(true);
+			}
+		}
+		
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			// Get the action command from the menu selection.
 			String comStr = ae.getActionCommand();
 
 			switch (comStr) {
-				case "New Game": startGame(); break;
-				case "Reset":
+				case "Start new game": startGame(); break;
+				case "Restart game":
 					if ((gp != null) && (gp.getStartConfigMatrix().length == Game.this.sizeOfGame)) {
 						resetGame();
 					} else
 						startGame();
 					break;
-				case "Save": 
-					SaveLoad sl = new SaveLoad(sizeOfGame, quantityOfStates);
-					sl.saveGame(gp);
+				case "Save game...": 
+					sLoader.saveGame(gp);
+					changeSaveLoadState();
 					break;
-				case "Load":
-					sl = new SaveLoad(sizeOfGame, quantityOfStates);
-					Game.this.gp = sl.loadSavedGame();
+				case "Load game...":
+					Game.this.gp = sLoader.loadSavedGame();
 					Game.this.changeButtons();
+					changeSaveLoadState();
 					break;
 				case "Show solution": 
 					gp.findCurrentSolution();

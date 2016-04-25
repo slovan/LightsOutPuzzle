@@ -10,13 +10,20 @@ import com.lightsout.core.Result;
 import com.lightsout.core.ResultsHandler;
 
 public class ShowResults {
-	private int size;
+	private int sizeOfGame;
+	private int quantityOfStates;
 	private ArrayList<Result> resList;
 	
-	public ShowResults(int size) {
-		this.size = size;
-		this.resList = new ResultsHandler(size, 2).getResultsList();
+	public ShowResults(int sizeOfGame, int quantityOfStates) {
+		this.sizeOfGame = sizeOfGame;
+		this.quantityOfStates = quantityOfStates;
+		this.resList = new ResultsHandler(sizeOfGame, quantityOfStates).getResultsList();
 		makeGUI();
+	}
+	
+	@Deprecated
+	public ShowResults(int sizeOfGame) {
+		this(sizeOfGame, 2);
 	}
 	
 	private Object[][] convertListToArray() {
@@ -28,7 +35,7 @@ public class ShowResults {
 	}
 	
 	private void makeGUI() {
-		JFrame jfrm = new JFrame("The results list of " + size + "x" + size + " game");
+		JFrame jfrm = new JFrame("The results list of " + sizeOfGame + "x" + sizeOfGame + " " + quantityOfStates + "-states game");
 		jfrm.setSize(700, 500);
 		jfrm.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		jfrm.setVisible(true);

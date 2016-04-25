@@ -39,7 +39,7 @@ public class GameProcess {
 		float coeff2 = 0.5f;
 		int coeffPow1 = this.userSteps - this.optimalSteps;
 		int coeffPow2 = this.timesOfShowingSolution;
-		int maxScore = (int) Math.pow(this.startConfigMatrix.length * 10, 2);
+		int maxScore = (int) Math.pow(this.startConfigMatrix.length * 10, quantityOfStates);
 
 		this.score = (int) (maxScore * Math.pow(coeff1, coeffPow1) * Math.pow(coeff2, coeffPow2));
 	}

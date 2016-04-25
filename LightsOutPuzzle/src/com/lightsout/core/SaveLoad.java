@@ -26,7 +26,7 @@ public class SaveLoad {
 				result = true;
 			}			
 		} catch (IOException exc) {
-			System.out.println("I/O Error: " + exc);
+			//System.out.println("I/O Error: " + exc);
 			result = false;
 		} 
 
