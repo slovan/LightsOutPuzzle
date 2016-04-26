@@ -24,7 +24,7 @@ public class ResultsHandler {
 	}
 
 	public ResultsHandler(int sizeOfGame, int quantityOfStates) {
-		this(sizeOfGame, quantityOfStates , 20);
+		this(sizeOfGame, quantityOfStates, 20);
 	}
 
 	public synchronized ArrayList<Result> readFromFile() {
@@ -87,7 +87,7 @@ public class ResultsHandler {
 
 	public boolean isBetweenWinners(Result result) {
 		boolean flag = false;
-		if (this.resultsList.isEmpty()) {
+		if (this.resultsList.isEmpty() || this.resultsList.size() < 20) {
 			flag = true;
 		} else {
 			for (Result r : this.resultsList) {
