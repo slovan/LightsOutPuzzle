@@ -132,6 +132,7 @@ public class Game extends JFrame implements ActionListener {
 		//setJMenuBar(mm);
 		mm.changeSaveLoadState();
 		mm.changeShowSolutionState();
+		mm.changeRestartState();
 		setGame();
 		
 	}
@@ -226,6 +227,7 @@ public class Game extends JFrame implements ActionListener {
 			gp = null;
 			mm.changeSaveLoadState();
 			mm.changeShowSolutionState();
+			mm.changeRestartState();
 		}
 	}
 	
@@ -307,6 +309,7 @@ public class Game extends JFrame implements ActionListener {
 		private JMenuItem jmiSave;
 		private JMenuItem jmiLoad;
 		private JMenuItem jmiShowSol;
+		private JMenuItem jmiReset;
 		private ButtonGroup groupOfSize;
 		private ButtonGroup groupOfStates;
 		private JRadioButtonMenuItem jmiSize1;
@@ -330,24 +333,25 @@ public class Game extends JFrame implements ActionListener {
 			JMenu jmSettings = new JMenu("Settings");
 			//JMenu 
 			JMenuItem jmiNew = new JMenuItem("Start new game");
-			JMenuItem jmiReset = new JMenuItem("Restart game");
+			jmiReset = new JMenuItem("Restart game");
+			changeRestartState();
 			
 			JMenu jmSize = new JMenu("Size of game");
 				// Use radio buttons for the size setting
 				jmiSize1 = new JRadioButtonMenuItem("3 x 3");
 				jmiSize1.addActionListener((ae) -> {
 					newSizeOfGame = 3;
-					interruptGame();
+					changeCurrentGame();
 				});
 				jmiSize2 = new JRadioButtonMenuItem("5 x 5", true);
 				jmiSize2.addActionListener((ae) -> {
 					newSizeOfGame = 5;
-					interruptGame();
+					changeCurrentGame();
 				});
 				jmiSize3 = new JRadioButtonMenuItem("7 x 7");
 				jmiSize3.addActionListener((ae) -> {
 					newSizeOfGame = 7;
-					interruptGame();
+					changeCurrentGame();
 				});
 				jmiSize4 = new JRadioButtonMenuItem("Customize...");
 				jmiSize4.addActionListener((ae) -> {
@@ -362,7 +366,7 @@ public class Game extends JFrame implements ActionListener {
 						posInStr++;
 						newSizeOfGame = Integer.parseInt(value.substring(0, posInStr));
 					}
-					interruptGame();
+					changeCurrentGame();
 				});
 				jmSize.add(jmiSize1);
 				jmSize.add(jmiSize2);
@@ -380,12 +384,12 @@ public class Game extends JFrame implements ActionListener {
 				jmiStates1 = new JRadioButtonMenuItem("2-states game", true);
 				jmiStates1.addActionListener((ae) -> {
 					newQuantityOfStates = 2;
-					interruptGame();
+					changeCurrentGame();
 				});
 				jmiStates2 = new JRadioButtonMenuItem("3-states game");
 				jmiStates2.addActionListener((ae) -> {
 					newQuantityOfStates = 3;
-					interruptGame();
+					changeCurrentGame();
 				});
 				jmStates.add(jmiStates1);
 				jmStates.add(jmiStates2);
@@ -431,15 +435,22 @@ public class Game extends JFrame implements ActionListener {
 		private static final long serialVersionUID = 7390736491903045087L;
 	
 		private void changeSaveLoadState() {
-			if (sLoader.isSavedGame()) {
-				jmiSave.setEnabled(false);
-				jmiLoad.setEnabled(true);
-			}else if (gp == null) {
-				jmiSave.setEnabled(false);
-				jmiLoad.setEnabled(false);
+			if (gp == null) {
+				if (sLoader.isSavedGame()) {
+					jmiSave.setEnabled(false);
+					jmiLoad.setEnabled(true);
+				} else {
+					jmiSave.setEnabled(false);
+					jmiLoad.setEnabled(false);
+				}
 			} else {
-				jmiSave.setEnabled(true);
-				jmiLoad.setEnabled(false);
+				if (sLoader.isSavedGame()) {
+					jmiSave.setEnabled(true);
+					jmiLoad.setEnabled(true);
+				} else {
+					jmiSave.setEnabled(true);
+					jmiLoad.setEnabled(false);
+				}
 			}
 		}
 		
@@ -451,20 +462,32 @@ public class Game extends JFrame implements ActionListener {
 			}
 		}
 		
-		private boolean interruptGame() {
+		private void changeRestartState() {
+			if (gp == null) {
+				jmiReset.setEnabled(false);
+			} else {
+				jmiReset.setEnabled(true);
+			}
+		}
+		
+		private boolean changeCurrentGame() {
 			if (displayingStartWindow) {
 				Game.this.sizeOfGame = this.newSizeOfGame;
 				Game.this.quantityOfStates = this.newQuantityOfStates;
+				Game.this.sLoader = new SaveLoad(sizeOfGame, quantityOfStates);
 				lab3.setText("Click on the image to start " + sizeOfGame + "x" + sizeOfGame + " " + quantityOfStates + "-states game!");
+				changeSaveLoadState();
 			} else {
 				int value = JOptionPane.showConfirmDialog(null, "Are you sure to interrupt the game?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 				if (value == 0) {
 					Game.this.sizeOfGame = this.newSizeOfGame;
 					Game.this.quantityOfStates = this.newQuantityOfStates;
+					Game.this.sLoader = new SaveLoad(sizeOfGame, quantityOfStates);
 					setStartBackground();
 					gp = null;
 					changeSaveLoadState();
 					changeShowSolutionState();
+					changeRestartState();
 				} else {
 					this.groupOfSize.clearSelection();
 					this.groupOfStates.clearSelection();
@@ -498,13 +521,31 @@ public class Game extends JFrame implements ActionListener {
 						startGame();
 					break;
 				case "Save game...": 
-					sLoader.saveGame(gp);
-					changeSaveLoadState();
+					if (sLoader.isSavedGame()) {
+						int value = JOptionPane.showConfirmDialog(null, "Are you sure to rewrite saved game? Previous game configuration will be lost!..", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+						if (value == 0) {
+							sLoader.saveGame(gp);
+							changeSaveLoadState();
+							changeShowSolutionState();
+						}
+					} else {
+						sLoader.saveGame(gp);
+						changeSaveLoadState();
+						changeShowSolutionState();
+					}
 					break;
 				case "Load game...":
-					Game.this.gp = sLoader.loadSavedGame();
-					Game.this.changeButtons();
+					if (Game.this.gp == null) {
+						displayingStartWindow = false;
+						Game.this.gp = sLoader.loadSavedGame();
+						setGame();
+					} else {
+						Game.this.gp = sLoader.loadSavedGame();
+						Game.this.changeButtons();
+					}
+					changeShowSolutionState();
 					changeSaveLoadState();
+					changeRestartState();
 					break;
 				case "Show solution": 
 					gp.findCurrentSolution();

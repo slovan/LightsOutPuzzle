@@ -10,10 +10,22 @@ import java.io.PrintWriter;
 public class SaveLoad {
 	private final String pathToFile;
 	private int quantityOfStates;
+	private int sizeOfGame;
 	
 	public SaveLoad(int sizeOfGame, int quantityOfStates) {
 		this.quantityOfStates = quantityOfStates;
+		this.sizeOfGame = sizeOfGame;
 		this.pathToFile = new String("saves/" + quantityOfStates + "stGame/" + sizeOfGame + "x" + sizeOfGame + ".svs");
+		File fr = new File(pathToFile);
+		if (!fr.exists()) {
+			fr.getParentFile().mkdirs();
+			try {
+				fr.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	public boolean isSavedGame() {
@@ -26,7 +38,7 @@ public class SaveLoad {
 				result = true;
 			}			
 		} catch (IOException exc) {
-			//System.out.println("I/O Error: " + exc);
+			System.out.println("I/O Error: " + exc);
 			result = false;
 		} 
 
@@ -34,9 +46,7 @@ public class SaveLoad {
 	}
 	
 	public GameProcess loadSavedGame() {
-		GameProcess gp = null;
-		BufferedReader br = null;
-		PrintWriter pw = null;
+		GameProcess gp = null;		
 		File fr = new File(pathToFile);
 		File tmp = new File(fr+".tmp");
 		int userSteps = 0;
@@ -44,13 +54,9 @@ public class SaveLoad {
 		int[][] startConfigMatrix = null;
 		int[][] changedConfigMatrix = null;
 		
-		try {			
-			if (!fr.exists()) {
-				fr.getParentFile().mkdirs();
-				fr.createNewFile();
-			}
-			br = new BufferedReader(new FileReader(fr));
-			pw = new PrintWriter(new FileWriter(tmp));
+		try (BufferedReader br = new BufferedReader(new FileReader(fr)); 
+				PrintWriter pw = new PrintWriter(new FileWriter(tmp))) {			
+
 			String str = br.readLine(); // read row
 
 			
@@ -67,6 +73,7 @@ public class SaveLoad {
 							}
 							str = br.readLine();
 						}
+						
 						break;
 					case "--- Changed Config ---":
 						str = br.readLine();
@@ -93,22 +100,24 @@ public class SaveLoad {
 						break;		
 				}
 			}
+			
+		} catch (NullPointerException exc) {
+			fr.delete();
+			tmp.renameTo(fr);
+			System.out.println("Error of reading data from file: New Game will be started.");
+			return new GameProcess(new InitialConfig(sizeOfGame, quantityOfStates).getRandomConfig(), quantityOfStates);
 		} catch (IOException exc) {
 			System.out.println("I/O Error: " + exc);
-		} finally {
-			try {
-				br.close();
-				pw.close();
-				fr.delete();
-		    	tmp.renameTo(fr);
-			} catch (IOException exc) {
-				System.out.println("I/O Error: " + exc);
-			}
-		}
+			return gp;
+		} 
+		fr.delete();
+		tmp.renameTo(fr);
+		
 		gp = new GameProcess(startConfigMatrix, quantityOfStates);
 		gp.setChangedConfigMatrix(changedConfigMatrix);
 		gp.setUserSteps(userSteps);
 		gp.setTimesOfShowingSolution(timesOfShowingSolution);
+		
 		return gp;
 	}
 	
