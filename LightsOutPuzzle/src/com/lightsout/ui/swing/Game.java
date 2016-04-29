@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -33,9 +34,12 @@ import com.lightsout.core.InitialConfig;
 import com.lightsout.core.Result;
 import com.lightsout.core.ResultsHandler;
 import com.lightsout.core.SaveLoad;
+import com.lightsout.language.LanguageSwitcher;
 import com.lightsout.core.GameProcess;
 
 public class Game extends JFrame implements ActionListener {
+	//private LanguageSwitcher langSw;
+	private HashMap<String, String> langScheme;
 	private GameProcess gp;
 	private int sizeOfGame; // size of game
 	private int quantityOfStates;
@@ -51,6 +55,7 @@ public class Game extends JFrame implements ActionListener {
 
 	public Game(String title) {
 		super(title);
+		this.langScheme = LanguageSwitcher.DEFAULT.getLangScheme();
 		try {
 			setIconImage(ImageIO.read(new File("images/icon.png")));
 		} catch (IOException e) {
@@ -65,7 +70,7 @@ public class Game extends JFrame implements ActionListener {
 		setJMenuBar(mm);
 
 		// Give the frame an initial size.
-		setSize(380, 350);
+		setSize(Integer.parseInt(langScheme.get("startWindowWidth")), 350);
 
 		// Terminate the program when the user closes the application.
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -79,26 +84,21 @@ public class Game extends JFrame implements ActionListener {
 
 		jp = new JPanel();
 		setStartBackground();
-		/*JButton startGame = new JButton(new ImageIcon("images/game-start.png"));
-		startGame.setFocusable(false);
-		startGame.setBorder(BorderFactory.createEmptyBorder());
-		startGame.setContentAreaFilled(false);
-		startGame.addActionListener((ae) -> startGame());
-		jp.add(startGame);*/
 		getContentPane().add(jp);
 	}
 	
 	private void setStartBackground() {
 		
 		jp.removeAll();
-		jp.setPreferredSize(new Dimension(380, 350));
+		jp.setPreferredSize(new Dimension(Integer.parseInt(langScheme.get("startWindowWidth")), 350));
 		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
 		jp.setBorder(null);
 		jp.setBackground(null);
-		this.setSize(380, 350);
+		this.setSize(Integer.parseInt(langScheme.get("startWindowWidth")), 350);
 		
 		JLabel lab1 = new JLabel();
-		lab1.setText("Welcome to Lights Out Puzzle!");
+
+		lab1.setText(langScheme.get("startWindowLabel1"));
 		lab1.setFont(new Font("Georgia", Font.BOLD, 22));
 		lab1.setAlignmentX(Component.CENTER_ALIGNMENT);
 		jp.add(Box.createVerticalStrut(10));
@@ -115,7 +115,7 @@ public class Game extends JFrame implements ActionListener {
 		jp.add(Box.createVerticalStrut(20));
 		
 		lab3 = new JLabel();
-		lab3.setText("Click on the image to start " + sizeOfGame + "x" + sizeOfGame + " " + quantityOfStates + "-states game!");
+		lab3.setText(langScheme.get("startWindowLabel2") + sizeOfGame + "x" + sizeOfGame + langScheme.get("startWindowLabel3") + quantityOfStates + langScheme.get("startWindowLabel4"));
 		lab3.setFont(new Font("Georgia", Font.PLAIN, 16));
 		lab3.setAlignmentX(Component.CENTER_ALIGNMENT);
 		jp.add(lab3);
