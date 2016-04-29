@@ -9,7 +9,9 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.HashMap;
 
 import javax.imageio.ImageIO;
@@ -38,18 +40,19 @@ import com.lightsout.language.LanguageSwitcher;
 import com.lightsout.core.GameProcess;
 
 public class Game extends JFrame implements ActionListener {
-	//private LanguageSwitcher langSw;
+	// private LanguageSwitcher langSw;
 	private HashMap<String, String> langScheme;
 	private GameProcess gp;
 	private int sizeOfGame; // size of game
 	private int quantityOfStates;
 	private boolean displayingStartWindow;
+	private boolean displayingGameOverWindow;
+	private JLabel lab1;
 	private JLabel lab3;
 	private JPanel jp;
 	private MyMenu mm;
 	private JButton[][] buttonsField;
 	private SaveLoad sLoader;
-
 
 	private static final long serialVersionUID = 1L;
 
@@ -65,7 +68,7 @@ public class Game extends JFrame implements ActionListener {
 		this.sizeOfGame = 5;
 		this.quantityOfStates = 2;
 		this.sLoader = new SaveLoad(sizeOfGame, quantityOfStates);
-		//this.gp = null;
+		// this.gp = null;
 		mm = new MyMenu();
 		setJMenuBar(mm);
 
@@ -80,23 +83,22 @@ public class Game extends JFrame implements ActionListener {
 		setResizable(false);
 
 		getContentPane().setLayout(new FlowLayout());
-		
 
 		jp = new JPanel();
 		setStartBackground();
 		getContentPane().add(jp);
 	}
-	
+
 	private void setStartBackground() {
-		
+
 		jp.removeAll();
 		jp.setPreferredSize(new Dimension(Integer.parseInt(langScheme.get("startWindowWidth")), 350));
 		jp.setLayout(new BoxLayout(jp, BoxLayout.Y_AXIS));
 		jp.setBorder(null);
 		jp.setBackground(null);
 		this.setSize(Integer.parseInt(langScheme.get("startWindowWidth")), 350);
-		
-		JLabel lab1 = new JLabel();
+
+		lab1 = new JLabel();
 
 		lab1.setText(langScheme.get("startWindowLabel1"));
 		lab1.setFont(new Font("Georgia", Font.BOLD, 22));
@@ -104,7 +106,7 @@ public class Game extends JFrame implements ActionListener {
 		jp.add(Box.createVerticalStrut(10));
 		jp.add(lab1);
 		jp.add(Box.createVerticalStrut(20));
-		
+
 		JButton startGame = new JButton(new ImageIcon("images/start.png"));
 		startGame.setFocusable(false);
 		startGame.setBorder(BorderFactory.createEmptyBorder());
@@ -113,34 +115,37 @@ public class Game extends JFrame implements ActionListener {
 		startGame.setAlignmentX(Component.CENTER_ALIGNMENT);
 		jp.add(startGame);
 		jp.add(Box.createVerticalStrut(20));
-		
+
 		lab3 = new JLabel();
-		lab3.setText(langScheme.get("startWindowLabel2") + sizeOfGame + "x" + sizeOfGame + langScheme.get("startWindowLabel3") + quantityOfStates + langScheme.get("startWindowLabel4"));
+		lab3.setText(langScheme.get("startWindowLabel2") + sizeOfGame + "x" + sizeOfGame
+				+ langScheme.get("startWindowLabel3") + quantityOfStates + langScheme.get("startWindowLabel4"));
 		lab3.setFont(new Font("Georgia", Font.PLAIN, 16));
 		lab3.setAlignmentX(Component.CENTER_ALIGNMENT);
 		jp.add(lab3);
-		
+
 		displayingStartWindow = true;
+		displayingGameOverWindow = false;
 	}
-	
+
 	public void startGame() {
 		displayingStartWindow = false;
 		sLoader = new SaveLoad(sizeOfGame, quantityOfStates);
 		InitialConfig initialConfig = new InitialConfig(sizeOfGame, quantityOfStates);
 		this.gp = new GameProcess(initialConfig.getRandomConfig(), quantityOfStates);
-		//mm = new MyMenu();
-		//setJMenuBar(mm);
+		// mm = new MyMenu();
+		// setJMenuBar(mm);
 		mm.changeSaveLoadState();
 		mm.changeShowSolutionState();
 		mm.changeRestartState();
 		setGame();
-		
+
 	}
+
 	public void resetGame() {
 		this.gp = new GameProcess(gp.getStartConfigMatrix(), quantityOfStates);
 		setGame();
 	}
-	
+
 	public void stopGame() {
 		getContentPane().removeAll();
 		setSize(350, 230);
@@ -149,8 +154,9 @@ public class Game extends JFrame implements ActionListener {
 		JLabel label = new JLabel("", new ImageIcon("images/game-over.png"), JLabel.CENTER);
 		jp.add(label);
 		getContentPane().add(jp);
+		displayingGameOverWindow = true;
 	}
-	
+
 	public void setGame() {
 		int[][] changedConfigMatrix = gp.getChangedConfigMatrix();
 		this.buttonsField = new JButton[sizeOfGame][sizeOfGame];
@@ -181,17 +187,17 @@ public class Game extends JFrame implements ActionListener {
 					buttonsField[i][j].setPressedIcon(new ImageIcon("images/red_boom.png"));
 					break;
 				}
-				
+
 				jp.add(buttonsField[i][j]);
 				buttonsField[i][j].setBorder(BorderFactory.createEmptyBorder());
 				buttonsField[i][j].setContentAreaFilled(false);
 				buttonsField[i][j].setFocusable(false);
-				
+
 				buttonsField[i][j].setActionCommand(i + " " + j);
 				buttonsField[i][j].addActionListener(this);
-				
+
 			}
-		}		
+		}
 	}
 
 	public void changeButtons() {
@@ -220,7 +226,7 @@ public class Game extends JFrame implements ActionListener {
 				}
 			}
 		}
-		if (gameOver){
+		if (gameOver) {
 			gp.computeScore();
 			stopGame();
 			congrat();
@@ -230,7 +236,7 @@ public class Game extends JFrame implements ActionListener {
 			mm.changeRestartState();
 		}
 	}
-	
+
 	public void showSolution() {
 		int[][] solution = gp.getCurrentSolution();
 		int[][] changedConfigMatrix = gp.getChangedConfigMatrix();
@@ -243,7 +249,7 @@ public class Game extends JFrame implements ActionListener {
 						buttonsField[i][j].setIcon(new ImageIcon("images/sol_light.png"));
 					} else {
 						buttonsField[i][j].setIcon(new ImageIcon("images/sol_red.png"));
-					}						
+					}
 				} else if (solution[i][j] == 2) {
 					if (changedConfigMatrix[i][j] == 0) {
 						buttonsField[i][j].setIcon(new ImageIcon("images/sol_black2.png"));
@@ -258,58 +264,58 @@ public class Game extends JFrame implements ActionListener {
 	}
 
 	public void congrat() {
-		String name = JOptionPane.showInputDialog(null, "Please, enter your name:", 
-				"Congratulations!", JOptionPane.INFORMATION_MESSAGE);
-		if ((name == null) || (name.equals("")))
-			name = "anonym";
-		System.out.println(name + " has finished the game!");
-		System.out.println("Optimal steps: " + gp.getOptimalSteps());
-		System.out.println("User steps: " + gp.getUserSteps());
-		System.out.println("Score: " + gp.getScore());
 		ResultsHandler rh = new ResultsHandler(sizeOfGame, quantityOfStates);
-		Result result = new Result(name, gp.getScore(), gp.getUserSteps(), gp.getOptimalSteps());
-		if(rh.isBetweenWinners(result))
+		Result result = new Result("anonym", gp.getScore(), gp.getUserSteps(), gp.getOptimalSteps());
+		if (rh.isBetweenWinners(result)) {
+			String name = JOptionPane.showInputDialog(null, langScheme.get("finishMessText1") + gp.getScore() + langScheme.get("finishMessText2"),
+				langScheme.get("finishMessTitle"), JOptionPane.INFORMATION_MESSAGE);
+			if (!(name == null) && !(name.equals("")))
+				result.setGamerName(name);
 			rh.updateResultsList(result);
+		}
 		SwingUtilities.invokeLater(() -> new ShowResults(sizeOfGame, quantityOfStates));
 
-		
 	}
 
 	public void actionPerformed(ActionEvent ae) {
 		String[] adress = ae.getActionCommand().split(" ");
 		int row = Integer.parseInt(adress[0]);
 		int col = Integer.parseInt(adress[1]);
-		
+
 		gp.makeOneStep(row, col);
 		changeButtons();
 	}
 
 	public static void main(String[] args) {
 		try {
-	        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-	    } catch (Exception e) { }
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
 		SwingUtilities.invokeLater(() -> new Game("The Lights Out Puzzle"));
-		//System.out.println("\nThe configuration matrix is:");
-		//printMatrix(InitialConfig.getConfigFromFile());
-		
+		// System.out.println("\nThe configuration matrix is:");
+		// printMatrix(InitialConfig.getConfigFromFile());
 
 	}
-/*
-	public static void printMatrix(int[][] matrix) {
-		for (int row[] : matrix) {
-			for (int elem : row)
-				System.out.printf("%1d ", elem);
-			System.out.println();
-		}
-	}
-*/
+	/*
+	 * public static void printMatrix(int[][] matrix) { for (int row[] : matrix)
+	 * { for (int elem : row) System.out.printf("%1d ", elem);
+	 * System.out.println(); } }
+	 */
 
 	class MyMenu extends JMenuBar implements ActionListener {
-				
+		
+		private JMenu jmGame;
+		private JMenu jmSettings;
+		private JMenu jmSize;
+		private JMenu jmStates;
+		private JMenu jmLang;
+		private JMenuItem jmiNew;
 		private JMenuItem jmiSave;
 		private JMenuItem jmiLoad;
 		private JMenuItem jmiShowSol;
 		private JMenuItem jmiReset;
+		private JMenuItem jmiExit;
 		private ButtonGroup groupOfSize;
 		private ButtonGroup groupOfStates;
 		private JRadioButtonMenuItem jmiSize1;
@@ -320,92 +326,143 @@ public class Game extends JFrame implements ActionListener {
 		private JRadioButtonMenuItem jmiStates2;
 		private int newSizeOfGame;
 		private int newQuantityOfStates;
-		
+
 		MyMenu() {
 			super();
-			
+
 			this.newSizeOfGame = Game.this.sizeOfGame;
 			this.newQuantityOfStates = Game.this.quantityOfStates;
-			
+
 			// Create the Game menu.
-			
-			JMenu jmGame = new JMenu("Game");
-			JMenu jmSettings = new JMenu("Settings");
-			//JMenu 
-			JMenuItem jmiNew = new JMenuItem("Start new game");
-			jmiReset = new JMenuItem("Restart game");
+
+			jmGame = new JMenu(langScheme.get("menuLabel1"));
+			// JMenu
+			jmiNew = new JMenuItem(langScheme.get("startGameLabel"));
+			jmiReset = new JMenuItem(langScheme.get("restartGameLabel"));
 			changeRestartState();
-			
-			JMenu jmSize = new JMenu("Size of game");
-				// Use radio buttons for the size setting
-				jmiSize1 = new JRadioButtonMenuItem("3 x 3");
-				jmiSize1.addActionListener((ae) -> {
-					newSizeOfGame = 3;
-					changeCurrentGame();
-				});
-				jmiSize2 = new JRadioButtonMenuItem("5 x 5", true);
-				jmiSize2.addActionListener((ae) -> {
-					newSizeOfGame = 5;
-					changeCurrentGame();
-				});
-				jmiSize3 = new JRadioButtonMenuItem("7 x 7");
-				jmiSize3.addActionListener((ae) -> {
-					newSizeOfGame = 7;
-					changeCurrentGame();
-				});
-				jmiSize4 = new JRadioButtonMenuItem("Customize...");
-				jmiSize4.addActionListener((ae) -> {
-					String[] possibleValues = { "3 x 3", "4 x 4", "5 x 5", "6 x 6",
-							"7 x 7", "8 x 8", "9 x 9", "10 x 10", "11 x 11", "12 x 12"};
-					String value = (String) JOptionPane.showInputDialog(null, "Choose desired size:", 
-							"Customize size of game", JOptionPane.QUESTION_MESSAGE, null, possibleValues, 
-							possibleValues[0]);
-					if (value != null) {
-						int posInStr = 0;
-						while (value.charAt(posInStr) >= '0' && value.charAt(posInStr) <= '9')
-						posInStr++;
-						newSizeOfGame = Integer.parseInt(value.substring(0, posInStr));
-					}
-					changeCurrentGame();
-				});
-				jmSize.add(jmiSize1);
-				jmSize.add(jmiSize2);
-				jmSize.add(jmiSize3);
-				jmSize.addSeparator();
-				jmSize.add(jmiSize4);
-				//Create button group for the radio button
-				groupOfSize = new ButtonGroup();
-				groupOfSize.add(jmiSize1);
-				groupOfSize.add(jmiSize2);
-				groupOfSize.add(jmiSize3);
-				groupOfSize.add(jmiSize4);
-			
-			JMenu jmStates = new JMenu("Quantity of states");
-				jmiStates1 = new JRadioButtonMenuItem("2-states game", true);
-				jmiStates1.addActionListener((ae) -> {
-					newQuantityOfStates = 2;
-					changeCurrentGame();
-				});
-				jmiStates2 = new JRadioButtonMenuItem("3-states game");
-				jmiStates2.addActionListener((ae) -> {
-					newQuantityOfStates = 3;
-					changeCurrentGame();
-				});
-				jmStates.add(jmiStates1);
-				jmStates.add(jmiStates2);
-				groupOfStates = new ButtonGroup();
-				groupOfStates.add(jmiStates1);
-				groupOfStates.add(jmiStates2);
-			
-			
-			jmiSave = new JMenuItem("Save game...");
-			jmiLoad = new JMenuItem("Load game...");
+
+			jmiSave = new JMenuItem(langScheme.get("saveLabel"));
+			jmiLoad = new JMenuItem(langScheme.get("loadLabel"));
 			changeSaveLoadState();
-			
-			jmiShowSol = new JMenuItem("Show solution");
+
+			jmiShowSol = new JMenuItem(langScheme.get("showSolLabel"));
 			changeShowSolutionState();
+
+			jmiExit = new JMenuItem(langScheme.get("exitLabel"));
 			
-			JMenuItem jmiExit = new JMenuItem("Exit");
+			
+			
+			
+			jmSettings = new JMenu(langScheme.get("menuLabel2"));
+
+			jmSize = new JMenu(langScheme.get("menuLabel5"));
+			// Use radio buttons for the size setting
+			jmiSize1 = new JRadioButtonMenuItem("3 x 3");
+			jmiSize1.addActionListener((ae) -> {
+				newSizeOfGame = 3;
+				changeCurrentGame();
+			});
+			jmiSize2 = new JRadioButtonMenuItem("5 x 5", true);
+			jmiSize2.addActionListener((ae) -> {
+				newSizeOfGame = 5;
+				changeCurrentGame();
+			});
+			jmiSize3 = new JRadioButtonMenuItem("7 x 7");
+			jmiSize3.addActionListener((ae) -> {
+				newSizeOfGame = 7;
+				changeCurrentGame();
+			});
+			jmiSize4 = new JRadioButtonMenuItem(langScheme.get("menuLabel6"));
+			jmiSize4.addActionListener((ae) -> {
+				String[] possibleValues = { "3 x 3", "4 x 4", "5 x 5", "6 x 6", "7 x 7", "8 x 8", "9 x 9", "10 x 10",
+						"11 x 11", "12 x 12" };
+				String value = (String) JOptionPane.showInputDialog(null, langScheme.get("sizeDialogText"),
+						langScheme.get("sizeDialogTitle"), JOptionPane.QUESTION_MESSAGE, null, possibleValues,
+						possibleValues[0]);
+				if (value != null) {
+					int posInStr = 0;
+					while (value.charAt(posInStr) >= '0' && value.charAt(posInStr) <= '9')
+						posInStr++;
+					newSizeOfGame = Integer.parseInt(value.substring(0, posInStr));
+				}
+				changeCurrentGame();
+			});
+			jmSize.add(jmiSize1);
+			jmSize.add(jmiSize2);
+			jmSize.add(jmiSize3);
+			jmSize.addSeparator();
+			jmSize.add(jmiSize4);
+			// Create button group for the radio button
+			groupOfSize = new ButtonGroup();
+			groupOfSize.add(jmiSize1);
+			groupOfSize.add(jmiSize2);
+			groupOfSize.add(jmiSize3);
+			groupOfSize.add(jmiSize4);
+
+			jmStates = new JMenu(langScheme.get("menuLabel7"));
+			jmiStates1 = new JRadioButtonMenuItem(langScheme.get("menuLabel8"), true);
+			jmiStates1.addActionListener((ae) -> {
+				newQuantityOfStates = 2;
+				changeCurrentGame();
+			});
+			jmiStates2 = new JRadioButtonMenuItem(langScheme.get("menuLabel9"));
+			jmiStates2.addActionListener((ae) -> {
+				newQuantityOfStates = 3;
+				changeCurrentGame();
+			});
+			jmStates.add(jmiStates1);
+			jmStates.add(jmiStates2);
+			groupOfStates = new ButtonGroup();
+			groupOfStates.add(jmiStates1);
+			groupOfStates.add(jmiStates2);
+			
+			jmLang = new JMenu(langScheme.get("interfaceLang"));
+			JRadioButtonMenuItem jmiLang1 = new JRadioButtonMenuItem("English");
+			JRadioButtonMenuItem jmiLang2 = new JRadioButtonMenuItem("Русский");
+			JRadioButtonMenuItem jmiLang3 = new JRadioButtonMenuItem("Slovenský");
+			if (LanguageSwitcher.RU.isCurrent()) {
+				jmiLang2.setSelected(true);
+			} else if (LanguageSwitcher.SK.isCurrent()) {
+				jmiLang3.setSelected(true);
+			} else {
+				jmiLang1.setSelected(true);
+			}
+			jmiLang1.addActionListener((ae) -> {
+				Game.this.langScheme = LanguageSwitcher.EN.getLangScheme();
+				try (PrintWriter pw = new PrintWriter(new FileWriter("langs/config.conf"))) {
+					pw.println("currentLanguage=EN");		
+				} catch (IOException exc) {
+					System.err.println("I/O Error: " + exc);
+				}
+				this.refreshInterfaceLang();
+			});
+			jmiLang2.addActionListener((ae) -> {
+				Game.this.langScheme = LanguageSwitcher.RU.getLangScheme();
+				try (PrintWriter pw = new PrintWriter(new FileWriter("langs/config.conf"))) {
+					pw.println("currentLanguage=RU");		
+				} catch (IOException exc) {
+					System.err.println("I/O Error: " + exc);
+				}
+				this.refreshInterfaceLang();
+			});
+			jmiLang3.addActionListener((ae) -> {
+				Game.this.langScheme = LanguageSwitcher.SK.getLangScheme();
+				try (PrintWriter pw = new PrintWriter(new FileWriter("langs/config.conf"))) {
+					pw.println("currentLanguage=SK");		
+				} catch (IOException exc) {
+					System.err.println("I/O Error: " + exc);
+				}
+				this.refreshInterfaceLang();
+			});
+			jmLang.add(jmiLang1);
+			jmLang.add(jmiLang2);
+			jmLang.add(jmiLang3);
+			ButtonGroup groupOfLang = new ButtonGroup();
+			groupOfLang.add(jmiLang1);
+			groupOfLang.add(jmiLang2);
+			groupOfLang.add(jmiLang3);
+
+			
 			jmGame.add(jmiNew);
 			jmGame.add(jmiReset);
 			jmGame.add(jmiSave);
@@ -415,25 +472,27 @@ public class Game extends JFrame implements ActionListener {
 			jmGame.add(jmiExit);
 			jmSettings.add(jmSize);
 			jmSettings.add(jmStates);
+			jmSettings.addSeparator();
+			jmSettings.add(jmLang);
 			add(jmGame);
 			add(jmSettings);
-	
+
 			// Add action listeners for the menu items.
 			jmiNew.addActionListener(this);
 			jmiReset.addActionListener(this);
-			jmSize.addActionListener(this);
-			jmStates.addActionListener(this);
+			//jmSize.addActionListener(this);
+			//jmStates.addActionListener(this);
 			jmiSave.addActionListener(this);
 			jmiLoad.addActionListener(this);
 			jmiShowSol.addActionListener(this);
 			jmiExit.addActionListener(this);
 		}
-	
+
 		/**
 		 * 
 		 */
 		private static final long serialVersionUID = 7390736491903045087L;
-	
+
 		private void changeSaveLoadState() {
 			if (gp == null) {
 				if (sLoader.isSavedGame()) {
@@ -453,7 +512,7 @@ public class Game extends JFrame implements ActionListener {
 				}
 			}
 		}
-		
+
 		private void changeShowSolutionState() {
 			if (gp == null) {
 				jmiShowSol.setEnabled(false);
@@ -461,7 +520,7 @@ public class Game extends JFrame implements ActionListener {
 				jmiShowSol.setEnabled(true);
 			}
 		}
-		
+
 		private void changeRestartState() {
 			if (gp == null) {
 				jmiReset.setEnabled(false);
@@ -470,15 +529,43 @@ public class Game extends JFrame implements ActionListener {
 			}
 		}
 		
+		private void refreshInterfaceLang() {
+			if (displayingStartWindow) {
+				Game.this.setSize(Integer.parseInt(langScheme.get("startWindowWidth")), 350);
+				jp.setPreferredSize(new Dimension(Integer.parseInt(langScheme.get("startWindowWidth")), 350));
+				this.setSize(Integer.parseInt(langScheme.get("startWindowWidth")), 350);
+				lab1.setText(langScheme.get("startWindowLabel1"));
+				lab3.setText(langScheme.get("startWindowLabel2") + sizeOfGame + "x" + sizeOfGame
+						+ langScheme.get("startWindowLabel3") + quantityOfStates + langScheme.get("startWindowLabel4"));
+			}
+			jmGame.setText(langScheme.get("menuLabel1"));	
+			jmiNew.setText(langScheme.get("startGameLabel"));
+			jmiReset.setText(langScheme.get("restartGameLabel"));
+			jmiSave.setText(langScheme.get("saveLabel"));
+			jmiLoad.setText(langScheme.get("loadLabel"));
+			jmiShowSol.setText(langScheme.get("showSolLabel"));
+			jmiExit.setText(langScheme.get("exitLabel"));
+			
+			jmSettings.setText(langScheme.get("menuLabel2"));
+			jmSize.setText(langScheme.get("menuLabel5"));
+			jmiSize4.setText(langScheme.get("menuLabel6"));
+			jmStates.setText(langScheme.get("menuLabel7"));
+			jmiStates1.setText(langScheme.get("menuLabel8"));
+			jmiStates2.setText(langScheme.get("menuLabel9"));
+			jmLang.setText(langScheme.get("interfaceLang"));
+		}
+
 		private boolean changeCurrentGame() {
 			if (displayingStartWindow) {
 				Game.this.sizeOfGame = this.newSizeOfGame;
 				Game.this.quantityOfStates = this.newQuantityOfStates;
 				Game.this.sLoader = new SaveLoad(sizeOfGame, quantityOfStates);
-				lab3.setText("Click on the image to start " + sizeOfGame + "x" + sizeOfGame + " " + quantityOfStates + "-states game!");
+				lab3.setText(langScheme.get("startWindowLabel2") + sizeOfGame + "x" + sizeOfGame
+						+ langScheme.get("startWindowLabel3") + quantityOfStates + langScheme.get("startWindowLabel4"));
 				changeSaveLoadState();
 			} else {
-				int value = JOptionPane.showConfirmDialog(null, "Are you sure to interrupt the game?", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+				int value = JOptionPane.showConfirmDialog(null, langScheme.get("interruptMessage"), langScheme.get("warningTitle"),
+						JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
 				if (value == 0) {
 					Game.this.sizeOfGame = this.newSizeOfGame;
 					Game.this.quantityOfStates = this.newQuantityOfStates;
@@ -492,67 +579,89 @@ public class Game extends JFrame implements ActionListener {
 					this.groupOfSize.clearSelection();
 					this.groupOfStates.clearSelection();
 					switch (sizeOfGame) {
-						case 3: this.jmiSize1.setSelected(true); break;
-						case 5: this.jmiSize2.setSelected(true); break;
-						case 7: this.jmiSize3.setSelected(true); break;
-						default: this.jmiSize4.setSelected(true); break;
+					case 3:
+						this.jmiSize1.setSelected(true);
+						break;
+					case 5:
+						this.jmiSize2.setSelected(true);
+						break;
+					case 7:
+						this.jmiSize3.setSelected(true);
+						break;
+					default:
+						this.jmiSize4.setSelected(true);
+						break;
 					}
 					switch (quantityOfStates) {
-						case 2: this.jmiStates1.setSelected(true); break;
-						case 3: this.jmiStates2.setSelected(true); break;
+					case 2:
+						this.jmiStates1.setSelected(true);
+						break;
+					case 3:
+						this.jmiStates2.setSelected(true);
+						break;
 					}
 					return false;
 				}
 			}
 			return true;
 		}
-		
+
 		@Override
 		public void actionPerformed(ActionEvent ae) {
 			// Get the action command from the menu selection.
 			String comStr = ae.getActionCommand();
-
-			switch (comStr) {
-				case "Start new game": startGame(); break;
-				case "Restart game":
-					if ((gp != null) && (gp.getStartConfigMatrix().length == Game.this.sizeOfGame)) {
-						resetGame();
-					} else
+			
+			if (comStr.equals(langScheme.get("startGameLabel"))) {
+				if (!displayingStartWindow && !displayingGameOverWindow) {
+					System.out.println("1. " + !displayingStartWindow);
+					System.out.println("2. " + (gp != null));
+					int value = JOptionPane.showConfirmDialog(null, langScheme.get("interruptMessage"), langScheme.get("warningTitle"),
+							JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+					if (value == 0) {
 						startGame();
-					break;
-				case "Save game...": 
-					if (sLoader.isSavedGame()) {
-						int value = JOptionPane.showConfirmDialog(null, "Are you sure to rewrite saved game? Previous game configuration will be lost!..", "Warning", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
-						if (value == 0) {
-							sLoader.saveGame(gp);
-							changeSaveLoadState();
-							changeShowSolutionState();
-						}
-					} else {
+					}
+				} else {
+					startGame();
+				}
+			} else if (comStr.equals(langScheme.get("restartGameLabel"))) {
+				if ((gp != null) && (gp.getStartConfigMatrix().length == Game.this.sizeOfGame)) {
+					int value = JOptionPane.showConfirmDialog(null, langScheme.get("interruptMessage"), langScheme.get("warningTitle"),
+							JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+					if (value == 0) {
+						resetGame();
+					}
+				}
+			} else if (comStr.equals(langScheme.get("saveLabel"))) {
+				if (sLoader.isSavedGame()) {
+					int value = JOptionPane.showConfirmDialog(null, langScheme.get("rewriteSavesMessage"),
+							langScheme.get("warningTitle"), JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+					if (value == 0) {
 						sLoader.saveGame(gp);
 						changeSaveLoadState();
 						changeShowSolutionState();
 					}
-					break;
-				case "Load game...":
-					if (Game.this.gp == null) {
-						displayingStartWindow = false;
-						Game.this.gp = sLoader.loadSavedGame();
-						setGame();
-					} else {
-						Game.this.gp = sLoader.loadSavedGame();
-						Game.this.changeButtons();
-					}
-					changeShowSolutionState();
+				} else {
+					sLoader.saveGame(gp);
 					changeSaveLoadState();
-					changeRestartState();
-					break;
-				case "Show solution": 
-					gp.findCurrentSolution();
-					showSolution(); 
-					break;
-				case "Exit": System.exit(0); break;
-				
+					changeShowSolutionState();
+				}
+			} else if (comStr.equals(langScheme.get("loadLabel"))) {
+				if (Game.this.gp == null) {
+					displayingStartWindow = false;
+					Game.this.gp = sLoader.loadSavedGame();
+					setGame();
+				} else {
+					Game.this.gp = sLoader.loadSavedGame();
+					Game.this.changeButtons();
+				}
+				changeShowSolutionState();
+				changeSaveLoadState();
+				changeRestartState();
+			} else if (comStr.equals(langScheme.get("showSolLabel"))) {
+				gp.findCurrentSolution();
+				showSolution();
+			} else if (comStr.equals(langScheme.get("exitLabel"))) {
+				System.exit(0);
 			}
 		}
 	}

@@ -9,27 +9,27 @@ import java.util.HashMap;
 
 public enum LanguageSwitcher {
 	DEFAULT, EN, RU("langs/russian.lng"), SK("langs/slovak.lng");
-	
+
 	private File fr;
-	private HashMap<String,String> langScheme;
-	
+	private HashMap<String, String> langScheme;
+
 	private LanguageSwitcher() {
-		if (this.toString().equals("EN")) {
-			this.fr = null;
-			this.langScheme = DefaultLanguage.getDefaultLanguageScheme();
-		} else if (this.toString().equals("DEFAULT")) {
+		this.langScheme = DefaultLanguage.getDefaultLanguageScheme();
+		this.fr = null;
+		if (this.toString().equals("DEFAULT")) {
 			try (BufferedReader br = new BufferedReader(new FileReader("langs/config.conf"))) {
 				String str = br.readLine();
 				String[] data = str.split("=");
 				if (data[0].equals("currentLanguage")) {
-					data[1] = data[1].toUpperCase();
-					if (data[1].equals("DEFAULT") || data[1].equals("EN")) {
-						this.fr = null;
-						this.langScheme = DefaultLanguage.getDefaultLanguageScheme();
-					} else {
-						LanguageSwitcher ls = LanguageSwitcher.valueOf(data[1]);
-						this.fr = ls.fr;
-						this.langScheme = ls.langScheme;
+					switch (data[1].toUpperCase()) {
+					case "RU":
+						this.fr = new File("langs/russian.lng");
+						obtainScheme();
+						break;
+					case "SK":
+						this.fr = new File("langs/slovak.lng");
+						obtainScheme();
+						break;
 					}
 				}
 			} catch (FileNotFoundException e) {
@@ -41,6 +41,7 @@ public enum LanguageSwitcher {
 			}
 		}
 	}
+
 	private LanguageSwitcher(String path) {
 		this.fr = new File(path);
 		if (!fr.exists()) {
@@ -55,17 +56,16 @@ public enum LanguageSwitcher {
 		this.langScheme = DefaultLanguage.getDefaultLanguageScheme();
 		obtainScheme();
 	}
-	
+
 	public HashMap<String, String> getLangScheme() {
 		return langScheme;
 	}
-	
+
 	private void obtainScheme() {
 		try (BufferedReader br = new BufferedReader(new FileReader(fr))) {
 			String str;
-			while((str = br.readLine()) != null) {
+			while ((str = br.readLine()) != null) {
 				String[] data = str.split("=");
-				System.out.println(data[1]);
 				langScheme.replace(data[0], data[1]);
 			}
 		} catch (FileNotFoundException e) {
@@ -76,18 +76,18 @@ public enum LanguageSwitcher {
 			e.printStackTrace();
 		}
 	}
-	
-	public boolean isCurrent(LanguageSwitcher langSw) {
+
+	public boolean isCurrent() {
 		try (BufferedReader br = new BufferedReader(new FileReader("langs/config.conf"))) {
 			String str = br.readLine();
 			String[] data = str.split("=");
 			if (data[0].equals("currentLanguage")) {
-				if (data[1].equals(langSw.toString()))
+				if (data[1].equals(this.toString()))
 					return true;
 				else
 					return false;
 			} else {
-				/////Add Exception
+				///// Add Exception
 				System.out.println("Error format of \"config.conf\"");
 				return false;
 			}
