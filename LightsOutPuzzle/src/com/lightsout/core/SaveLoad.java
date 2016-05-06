@@ -31,12 +31,21 @@ public class SaveLoad {
     }
 
     public boolean isSavedGame() {
+        boolean flag;
         try (BufferedReader br = new BufferedReader(new FileReader(this.pathToFile))) {
-            return br.readLine().equals("--- Start Config ---");
+            String str = br.readLine();
+            if (str == null) {
+                flag = false;
+            } else if (!str.equals("--- Start Config ---")) {
+                flag = false;
+            } else {
+                flag = true;
+            }
         } catch (IOException exc) {
             System.out.println("I/O Error: " + exc);
-            return false;
+            flag = false;
         }
+        return flag;
     }
 
     public GameProcess loadSavedGame() {
